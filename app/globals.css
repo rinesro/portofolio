@@ -1,0 +1,129 @@
+@import "tailwindcss";
+
+/*
+  Mode gelap dipicu oleh atribut data-theme pada <html>.
+  Nilainya diisi skrip kecil di layout: preferensi tersimpan, atau
+  preferensi sistem kalau pengguna belum pernah memilih.
+*/
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+:root {
+  /* Palet netral hangat, bukan abu-abu kebiruan. */
+  --warna-latar: #faf7f2;
+  --warna-permukaan: #f3eee5;
+  --warna-garis: #e2d9cb;
+  --warna-teks: #1f1b16;
+  --warna-teks-lembut: #6b6157;
+  /* Satu warna aksen saja, dipakai hemat. */
+  --warna-aksen: #a8421f;
+  --warna-aksen-lembut: #f2e2d9;
+  --warna-bayangan: 31 27 22;
+}
+
+[data-theme="dark"] {
+  --warna-latar: #15120f;
+  --warna-permukaan: #1e1a16;
+  --warna-garis: #332d26;
+  --warna-teks: #efe8de;
+  --warna-teks-lembut: #a79c8e;
+  --warna-aksen: #e08a62;
+  --warna-aksen-lembut: #2c211a;
+  --warna-bayangan: 0 0 0;
+}
+
+@theme inline {
+  --color-latar: var(--warna-latar);
+  --color-permukaan: var(--warna-permukaan);
+  --color-garis: var(--warna-garis);
+  --color-teks: var(--warna-teks);
+  --color-lembut: var(--warna-teks-lembut);
+  --color-aksen: var(--warna-aksen);
+  --color-aksen-lembut: var(--warna-aksen-lembut);
+
+  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-plex), ui-sans-serif, system-ui, sans-serif;
+
+  /* Lebar baca nyaman, sekitar 70 karakter. */
+  --spacing-baca: 34rem;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    /* Beri ruang di bawah header lengket saat melompat ke anchor. */
+    scroll-padding-top: 6rem;
+    color-scheme: light;
+  }
+
+  [data-theme="dark"] {
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--warna-latar);
+    color: var(--warna-teks);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background-color: var(--warna-aksen);
+    color: var(--warna-latar);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--warna-aksen);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: -0.015em;
+  }
+}
+
+@layer components {
+  /*
+    Fade-in ringan saat elemen masuk layar.
+    Keadaan tersembunyi hanya berlaku kalau JavaScript aktif ([data-js]),
+    jadi tanpa JavaScript seluruh isi halaman tetap terbaca.
+  */
+  [data-js] .muncul {
+    opacity: 0;
+    transform: translateY(12px);
+    transition:
+      opacity 600ms ease-out,
+      transform 600ms ease-out;
+  }
+
+  [data-js] .muncul[data-terlihat="true"] {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  [data-js] .muncul {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
