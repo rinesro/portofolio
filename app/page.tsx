@@ -5,6 +5,14 @@ import { profil } from "@/content/profil";
 import { KartuEntri } from "@/components/kartu-entri";
 import { DaftarKeahlian } from "@/components/daftar-keahlian";
 import { Muncul } from "@/components/muncul";
+import { buatMetadata } from "@/lib/metadata";
+import { situs } from "@/content/situs";
+
+export const metadata = buatMetadata({
+  judul: situs.nama,
+  deskripsi: situs.deskripsi,
+  path: "/",
+});
 
 export default function Beranda() {
   return (
