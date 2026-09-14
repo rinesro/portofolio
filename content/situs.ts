@@ -16,6 +16,6 @@ export const situs = {
     /** Taruh file PDF-nya di /public dengan nama yang sama persis. */
     path: "/cv-sandhika-hamzah.pdf",
     /** Ubah ke true setelah file CV benar-benar ada di /public. */
-    tersedia: false,
+    tersedia: true,
   },
 } as const;

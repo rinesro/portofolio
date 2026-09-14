@@ -130,6 +130,7 @@ Semua berkas statis ada di `/public` dan diakses lewat path root. Susunannya:
 | `/public/notebook/` | Notebook Jupyter mentah, ditautkan sebagai tombol unduh       |
 | `/public/dokumen/`  | PDF dan spreadsheet, ditautkan sebagai tombol unduh           |
 | `/public/gambar/`   | Grafik yang tampil di bagian Visualisasi, dikelompokkan per studi kasus |
+| `/public/`          | `cv-sandhika-hamzah.pdf`, ditautkan dari tombol di navigasi     |
 
 Ukuran file pada tombol unduh dibaca otomatis saat build, jadi tidak perlu
 ditulis manual.
@@ -194,50 +195,46 @@ Cloudflare Pages, atau GitHub Pages dengan mengunggah isi folder `out/`.
 
 ## Daftar placeholder yang masih perlu diisi
 
-Sisanya tinggal sedikit. Semua placeholder tampil mencolok di situs sebagai
-kotak bergaris putus-putus bertuliskan "Belum diisi", jadi tidak akan lolos
-tanpa disadari.
+Tinggal dua, plus satu yang sifatnya opsional. Semua placeholder tampil
+mencolok di situs sebagai kotak atau chip bergaris putus-putus bertuliskan
+"belum diisi", jadi tidak akan lolos tanpa disadari.
 
-### 1. File CV
+### 1. Tautan prototipe Streamlit (Prediksi Dropout)
 
-- [ ] Taruh `cv-sandhika-hamzah.pdf` di `/public`, lalu ubah `cv.tersedia`
-      menjadi `true` di `content/situs.ts` supaya tombol "Unduh CV" di navigasi
-      aktif. Sebelum itu, tombolnya tampil sebagai "CV (belum diunggah)".
+- [ ] README repo `jaya-jaya-dropout-prediction` memuat dua URL Streamlit yang
+      berbeda antara teks tautan dan target hyperlink-nya, jadi belum jelas mana
+      yang aktif. Setelah dipastikan, isi `href` pada entri "Prototipe prediksi
+      (Streamlit)" di `content/entri.ts`. Sekalian rapikan juga README repo itu
+      supaya tidak menyimpan dua alamat berbeda.
 
 ### 2. Alamat situs
 
 - [ ] `url` di `content/situs.ts` masih memakai alamat sementara
       `https://sandhika-hamzah.vercel.app`. Ganti setelah domain finalnya ada.
-- [ ] Gambar Open Graph (opsional) — kalau ingin thumbnail saat link dibagikan,
-      taruh `og.png` (1200×630) di `/public` lalu daftarkan di `lib/metadata.ts`.
 
-### 3. Synthetic Store Indonesia
+### 3. Gambar Open Graph (opsional)
 
-- [ ] **Analisis Lanjutan** — hasil model regresi di Orange Data Mining. Ini
-      satu-satunya bagian yang datanya tidak ada di spreadsheet, jadi perlu
-      dijalankan ulang atau dicari catatan metriknya.
-- [ ] **Tautan versi online** — link spreadsheet Google Sheets dan dashboard
-      Looker Studio yang bisa dibuka langsung. Versi unduhannya (XLSX dan PDF)
-      sudah terpasang, tetapi link hidup lebih meyakinkan bagi recruiter.
-
-### 4. Prediksi Dropout Mahasiswa
-
-- [ ] **Rekomendasi** pada bagian Kesimpulan. Notebooknya berhenti di temuan dan
-      tidak memuat rekomendasi, jadi bagian ini memang perlu ditulis manual:
-      kapan mahasiswa berisiko mulai dihubungi, dan siapa yang menanganinya.
-
-### 5. Capital Bikeshare
-
-Tidak ada placeholder. Seluruh isinya sudah lengkap dari notebook.
+- [ ] Kalau ingin thumbnail saat link dibagikan, taruh `og.png` (1200×630) di
+      `/public` lalu daftarkan di `lib/metadata.ts`.
 
 ---
 
 ## Catatan soal isi
 
-Angka dan temuan di tiap studi kasus diambil langsung dari berkas kerjanya,
-yaitu spreadsheet `synthetic-store-indonesia.xlsx` dan dua notebook Jupyter di
-`/public/notebook/`. Kalau berkas sumbernya diperbarui, perbarui juga angkanya
-di `content/entri.ts` supaya keduanya tidak berbeda.
+Angka dan temuan di tiap studi kasus diambil langsung dari berkas kerjanya:
+spreadsheet `synthetic-store-indonesia.xlsx`, dua notebook Jupyter di
+`/public/notebook/`, README repositori masing-masing, serta hasil widget Test
+and Score dan Predictions di Orange Data Mining. Kalau berkas sumbernya
+diperbarui, perbarui juga angkanya di `content/entri.ts` supaya keduanya tidak
+berbeda.
+
+Satu hal yang perlu dirapikan di sisi sumber: sel markdown terakhir pada
+notebook dropout menyebut tiga fitur terpenting adalah SKS semester 2, SKS
+semester 1, dan status pelunasan biaya kuliah. Grafik feature importance di
+notebook yang sama menunjukkan urutan yang berbeda, yaitu SKS semester 2
+(0,2026), nilai rata-rata semester 2 (0,1560), SKS semester 1 (0,1165), lalu
+nilai semester 1 dan status pelunasan yang sama-sama 0,0596. Situs ini memakai
+angka dari grafiknya, karena itu output yang sebenarnya.
 
 ### Yang sengaja tidak ada di situs ini
 

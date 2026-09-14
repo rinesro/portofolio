@@ -44,8 +44,13 @@ export default async function HalamanDetail({ params }: Props) {
     ...e.bagian.map((b) => ({ id: b.id, judul: b.judul })),
     { id: "berkas-dan-tautan", judul: "Berkas dan tautan" },
   ];
-  const idGambar = e.gambarDiBagian ?? "visualisasi";
-  const adaBagianGambar = e.bagian.some((b) => b.id === idGambar);
+  const idGambarDefault = e.gambarDiBagian ?? "visualisasi";
+  const gambarBagian = (id: string) =>
+    e.gambar.filter((g) => (g.bagian ?? idGambarDefault) === id);
+  const idBagian = new Set(e.bagian.map((b) => b.id));
+  const gambarTanpaBagian = e.gambar.filter(
+    (g) => !idBagian.has(g.bagian ?? idGambarDefault),
+  );
 
   return (
     <div className="mx-auto max-w-5xl px-5 sm:px-8">
@@ -100,19 +105,18 @@ export default async function HalamanDetail({ params }: Props) {
                   <div className="max-w-baca">
                     <BlokKonten blok={b.blok} />
                   </div>
-                  {b.id === idGambar &&
-                    e.gambar.map((g) => (
-                      <SlotGambar key={g.caption} gambar={g} />
-                    ))}
+                  {gambarBagian(b.id).map((g) => (
+                    <SlotGambar key={g.caption} gambar={g} />
+                  ))}
                 </section>
               </Muncul>
             ))}
 
-            {/* Kalau bagian tujuan gambar tidak ada, gambar tetap ditampilkan di akhir. */}
-            {!adaBagianGambar && e.gambar.length > 0 && (
+            {/* Gambar yang bagian tujuannya tidak ada tetap ditampilkan di akhir. */}
+            {gambarTanpaBagian.length > 0 && (
               <section className="mt-14">
                 <h2 className="font-display text-2xl sm:text-3xl">Tampilan</h2>
-                {e.gambar.map((g) => (
+                {gambarTanpaBagian.map((g) => (
                   <SlotGambar key={g.caption} gambar={g} />
                 ))}
               </section>

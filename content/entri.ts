@@ -38,8 +38,14 @@ export const entri: Entri[] = [
       },
     ],
     tautan: [
-      { label: "Spreadsheet versi online", href: null },
-      { label: "Dashboard Looker Studio versi online", href: null },
+      {
+        label: "Spreadsheet pembersihan dan analisis (Google Sheets)",
+        href: "https://docs.google.com/spreadsheets/d/1AmI79UeT6z-amRZiLrSEJL_v3ov2Xi-ZlkdH00Opzik/edit?usp=sharing",
+      },
+      {
+        label: "Dashboard penjualan (Looker Studio)",
+        href: "https://datastudio.google.com/reporting/ff430b20-a3f4-4b9f-b7fb-f9382f9a5d3d",
+      },
     ],
     bagian: [
       {
@@ -136,12 +142,20 @@ export const entri: Entri[] = [
         blok: [
           {
             kind: "paragraf",
-            teks: "Analisis prediktif regresi terhadap keuntungan menggunakan Orange Data Mining, dengan alur kerja yang didokumentasikan agar bisa direproduksi.",
+            teks: "Analisis prediktif regresi terhadap keuntungan dikerjakan di Orange Data Mining, dengan alur kerja yang didokumentasikan agar bisa direproduksi. Dua model dibandingkan dengan kolom keuntungan sebagai target, yaitu Linear Regression dan Random Forest.",
           },
           {
-            kind: "placeholder",
-            petunjuk:
-              "Tulis hasil model regresi di Orange: metrik yang keluar dan apa artinya. Kalau angkanya tidak tersimpan, jalankan ulang alurnya lebih dulu.",
+            kind: "daftar",
+            item: [
+              "Pada widget Test and Score, Random Forest unggul di seluruh metrik: R\u00b2 0,505 berbanding 0,268, RMSE 2.456.515 berbanding 2.988.549, MAE 346.158 berbanding 875.248, dan sMAPE 39,36 berbanding 117,07.",
+              "Pada widget Predictions, jaraknya makin lebar: Random Forest mencatat R\u00b2 0,904 dengan RMSE 1.083.216 dan MAE 155.800, sedangkan Linear Regression R\u00b2 0,390 dengan RMSE 2.727.401 dan MAE 844.527.",
+              "Uji perbandingan model berdasarkan mean square error memberi Random Forest peluang 0,994 untuk lebih baik daripada Linear Regression.",
+              "MAPE keluar tak hingga pada kedua model, sehingga perbandingan galat relatif memakai sMAPE.",
+            ],
+          },
+          {
+            kind: "paragraf",
+            teks: "Selisih sebesar itu menunjukkan hubungan antara fitur dan keuntungan tidak cukup dijelaskan model linier, jadi model berbasis pohon lebih cocok untuk data ini. Keuntungan juga memuat nilai negatif, yang membuat metrik berbasis persentase seperti MAPE tidak bisa dipakai.",
           },
         ],
       },
@@ -226,7 +240,7 @@ export const entri: Entri[] = [
       pendekatan:
         "Eksplorasi 4.424 catatan mahasiswa dengan Python dan pandas untuk mencari faktor yang paling berkaitan dengan dropout, lalu melatih model klasifikasi Random Forest sebagai alat deteksi dini.",
       hasil:
-        "Model mencapai akurasi 0,90 pada 726 data uji, dengan recall 0,82 untuk kelas dropout. Dua penanda terkuat sama-sama muncul sejak tahun pertama: jumlah SKS yang lulus dan status pelunasan biaya kuliah.",
+        "Model mencapai akurasi 0,90 pada 726 data uji, dengan recall 0,82 untuk kelas dropout. Dua penanda terkuat sama-sama muncul sejak tahun pertama: jumlah SKS yang lulus dan status pelunasan biaya kuliah. Temuannya dituangkan ke dashboard Metabase dan prototipe prediksi Streamlit supaya bisa dipakai berulang.",
     },
     tools: [
       "Python",
@@ -235,6 +249,8 @@ export const entri: Entri[] = [
       "Scikit-learn",
       "Matplotlib",
       "Seaborn",
+      "Metabase",
+      "Streamlit",
     ],
     berkas: [
       {
@@ -249,6 +265,7 @@ export const entri: Entri[] = [
         label: "Repositori GitHub",
         href: "https://github.com/rinesro/jaya-jaya-dropout-prediction",
       },
+      { label: "Prototipe prediksi (Streamlit)", href: null },
     ],
     bagian: [
       {
@@ -261,7 +278,7 @@ export const entri: Entri[] = [
           },
           {
             kind: "paragraf",
-            teks: "Dropout merugikan institusi secara finansial maupun reputasi, dan merugikan masa depan mahasiswanya sendiri. Masalah utamanya soal waktu: manajemen sering baru sadar seorang mahasiswa akan berhenti setelah semuanya terlambat, sehingga tidak ada tindakan pencegahan yang sempat dilakukan.",
+            teks: "Dari total populasi historis, 32,1 persen mahasiswa berakhir dropout. Angka itu merugikan institusi secara finansial maupun reputasi, dan merugikan masa depan mahasiswanya sendiri. Masalah utamanya soal waktu: manajemen sering baru sadar seorang mahasiswa akan berhenti setelah semuanya terlambat, sehingga tidak ada tindakan pencegahan yang sempat dilakukan.",
           },
         ],
       },
@@ -320,6 +337,10 @@ export const entri: Entri[] = [
           },
           {
             kind: "paragraf",
+            teks: "Dilihat dari komposisinya, 4.424 mahasiswa terbagi menjadi 49,9 persen lulus, 32,1 persen dropout, dan 17,9 persen masih berstatus terdaftar. Dropout paling menumpuk pada rentang usia masuk 18 sampai 21 tahun.",
+          },
+          {
+            kind: "paragraf",
             teks: "Artinya mahasiswa yang berisiko sudah memberi sinyal sejak tahun pertama, jauh sebelum keputusan berhenti benar-benar diambil. Di situlah ruang untuk intervensi berada.",
           },
         ],
@@ -362,6 +383,23 @@ export const entri: Entri[] = [
         ],
       },
       {
+        id: "dashboard-dan-prototipe",
+        judul: "Dashboard dan Prototipe",
+        blok: [
+          {
+            kind: "paragraf",
+            teks: "Analisis sekali jalan tidak menjawab kebutuhan pemantauan, jadi temuannya diteruskan ke dua alat yang bisa dipakai berulang oleh institusi.",
+          },
+          {
+            kind: "daftar",
+            item: [
+              "Dashboard Metabase untuk memantau profil mahasiswa: komposisi status, sebaran usia masuk, sebaran SKS lulus semester 1 dan 2, serta status pelunasan biaya kuliah per status akhir.",
+              "Prototipe prediksi berbasis Streamlit, tempat staf kemahasiswaan bisa memasukkan data seorang mahasiswa dan langsung melihat perkiraan risikonya, tanpa perlu membuka notebook.",
+            ],
+          },
+        ],
+      },
+      {
         id: "kesimpulan",
         judul: "Kesimpulan dan Rekomendasi",
         blok: [
@@ -374,9 +412,16 @@ export const entri: Entri[] = [
             teks: "Model Random Forest yang dilatih mampu menandai 82 persen mahasiswa yang benar-benar akan dropout pada data uji, jadi cukup layak dipakai sebagai penyaring awal sebelum ditindaklanjuti secara manual.",
           },
           {
-            kind: "placeholder",
-            petunjuk:
-              "Notebook ini berhenti di temuan dan belum memuat bagian rekomendasi. Tulis rekomendasi tindak lanjut untuk institusi, misalnya kapan mahasiswa berisiko mulai dihubungi dan siapa yang menanganinya.",
+            kind: "paragraf",
+            teks: "Tiga tindakan berikut direkomendasikan untuk manajemen institusi.",
+          },
+          {
+            kind: "daftar",
+            item: [
+              "Sistem peringatan dini finansial: staf keuangan diberi notifikasi ketika ada mahasiswa yang belum melunasi tagihan di pertengahan semester, supaya kampus bisa lebih dulu menawarkan restrukturisasi cicilan atau beasiswa bantuan sebelum mahasiswanya memilih berhenti.",
+              "Intervensi akademik tahun pertama: dosen pembimbing akademik memanggil khusus mahasiswa yang gagal meluluskan lebih dari 2 SKS di semester 1, untuk memberi bimbingan belajar intensif sebelum masuk semester 2.",
+              "Pemanfaatan prototipe: prototipe Streamlit diintegrasikan ke portal registrasi, sehingga staf kemahasiswaan bisa mengecek skor risiko tiap mahasiswa secara mandiri di awal semester baru.",
+            ],
           },
         ],
       },
@@ -404,6 +449,14 @@ export const entri: Entri[] = [
         rasio: "530 / 417",
       },
       {
+        src: "/gambar/prediksi-dropout/dashboard-metabase.png",
+        alt: "Dashboard Metabase berlatar gelap berisi donat komposisi status mahasiswa, kartu jumlah 4.424 mahasiswa, histogram usia masuk, sebaran SKS lulus semester 1 dan 2, serta batang status pelunasan biaya kuliah.",
+        caption:
+          "Dashboard Metabase untuk memantau profil mahasiswa: komposisi status, sebaran usia masuk, SKS lulus dua semester pertama, dan status pelunasan biaya kuliah.",
+        rasio: "2186 / 2340",
+        bagian: "dashboard-dan-prototipe",
+      },
+      {
         src: "/gambar/prediksi-dropout/sepuluh-fitur-paling-berpengaruh.png",
         alt: "Diagram batang horizontal sepuluh fitur paling berpengaruh, dipimpin jumlah SKS lulus semester 2 dengan nilai 0,2026.",
         caption:
@@ -429,7 +482,7 @@ export const entri: Entri[] = [
       hasil:
         "Cuaca cerah menghasilkan rata-rata 4.876,79 penyewaan per hari, hampir tiga kali lipat hari bersalju atau hujan ringan. Total penyewaan naik dari 1.243.103 pada 2011 menjadi 2.049.576 pada 2012, dan pola per jam memperlihatkan dua segmen pengguna yang berbeda.",
     },
-    tools: ["Python", "pandas", "NumPy", "Matplotlib", "Seaborn"],
+    tools: ["Python", "pandas", "NumPy", "Matplotlib", "Seaborn", "Streamlit"],
     berkas: [
       {
         label: "Notebook analisis",
@@ -451,7 +504,11 @@ export const entri: Entri[] = [
         blok: [
           {
             kind: "paragraf",
-            teks: "Data perjalanan layanan sepeda berbagi selama dua tahun dianalisis untuk memahami pola permintaan: kapan orang menyewa, dalam kondisi apa, dan apakah bisnisnya bertumbuh.",
+            teks: "Sistem sepeda berbagi jadi tulang punggung mobilitas kota, tetapi ketersediaan armada dan jumlah penyewaan naik turun mengikuti faktor lingkungan. Data perjalanan Capital Bikeshare di Washington D.C. sepanjang 2011 sampai 2012 dianalisis untuk memahami pola permintaannya: kapan orang menyewa, dalam kondisi apa, dan apakah bisnisnya bertumbuh.",
+          },
+          {
+            kind: "catatan",
+            teks: "Analisis ini bagian dari validasi sertifikasi Data Scientist Expert Level IDCamp dan Dicoding Indonesia. Dataset aslinya disediakan Hadi Fanaee-T, University of Porto.",
           },
         ],
       },
@@ -509,6 +566,20 @@ export const entri: Entri[] = [
           {
             kind: "paragraf",
             teks: "Empat grafik berikut diambil langsung dari notebook: pengaruh cuaca, tren dua tahun, pengelompokan suhu, dan pola penyewaan per jam.",
+          },
+        ],
+      },
+      {
+        id: "dashboard",
+        judul: "Dashboard Interaktif",
+        blok: [
+          {
+            kind: "paragraf",
+            teks: "Selain notebook, dibangun dashboard Streamlit yang membaca langsung data bersih hasil notebook. Dashboard ini punya filter rentang tanggal di sisi kiri, tiga kartu ringkasan berisi total penyewaan, rata-rata harian, dan penyewaan maksimum, lalu grafik yang ikut menyesuaikan rentang yang dipilih.",
+          },
+          {
+            kind: "paragraf",
+            teks: "Tujuannya supaya pertanyaan susulan, misalnya bagaimana pola di satu musim tertentu, bisa dijawab tanpa membuka kode sama sekali. Cara menjalankannya ada di repositori.",
           },
         ],
       },

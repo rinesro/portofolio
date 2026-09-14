@@ -33,6 +33,8 @@ export type Gambar = {
   caption: string;
   /** Rasio kotak gambar, sesuaikan dengan ukuran asli file. */
   rasio?: string;
+  /** id bagian tempat gambar ini tampil. Default: ikut `gambarDiBagian`. */
+  bagian?: string;
 };
 
 export type Tautan = {
