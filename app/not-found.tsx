@@ -22,10 +22,10 @@ export default function TidakDitemukan() {
           Kembali ke beranda
         </Link>
         <Link
-          href="/data-analyst/"
+          href="/#studi-kasus"
           className="text-lembut underline decoration-garis underline-offset-4 transition-colors hover:text-aksen"
         >
-          Lihat jalur Data Analyst
+          Lihat daftar studi kasus
         </Link>
       </div>
     </div>

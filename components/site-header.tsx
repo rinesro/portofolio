@@ -9,9 +9,13 @@ import { situs } from "@/content/situs";
 import { profil } from "@/content/profil";
 
 const menu = [
-  { href: "/data-analyst/", label: "Data Analyst" },
-  { href: "/data-engineer/", label: "Data Engineer" },
-  { href: "/tentang/", label: "Tentang Saya" },
+  { href: "/", label: "Beranda", cocok: (p: string) => p === "/" },
+  {
+    href: "/#studi-kasus",
+    label: "Studi Kasus",
+    cocok: (p: string) => p.startsWith("/studi-kasus"),
+  },
+  { href: "/tentang/", label: "Tentang Saya", cocok: (p: string) => p.startsWith("/tentang") },
 ];
 
 export function SiteHeader() {
@@ -32,7 +36,7 @@ export function SiteHeader() {
           <nav aria-label="Navigasi utama" className="hidden md:block">
             <ul className="flex items-center gap-1 text-sm">
               {menu.map((m) => {
-                const aktif = path.startsWith(m.href);
+                const aktif = m.cocok(path);
                 return (
                   <li key={m.href}>
                     <Link

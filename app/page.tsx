@@ -1,13 +1,10 @@
 import Link from "next/link";
-import { jalur } from "@/content/jalur";
-import { entriPerJalur } from "@/content/entri";
+import { entriTerurut } from "@/content/entri";
 import { ambilKeahlian, keahlianBeranda } from "@/content/keahlian";
 import { profil } from "@/content/profil";
-import { KartuJalur } from "@/components/kartu-jalur";
+import { KartuEntri } from "@/components/kartu-entri";
 import { DaftarKeahlian } from "@/components/daftar-keahlian";
 import { Muncul } from "@/components/muncul";
-
-const [analis, engineer] = jalur;
 
 export default function Beranda() {
   return (
@@ -27,28 +24,32 @@ export default function Beranda() {
         </p>
       </section>
 
-      <section aria-labelledby="jalur" className="py-16 sm:py-20">
-        <h2 id="jalur" className="font-display text-2xl sm:text-3xl">
-          Dua jalur pekerjaan
-        </h2>
+      <section
+        id="studi-kasus"
+        aria-labelledby="studi-kasus-judul"
+        className="scroll-mt-24 py-16 sm:py-20"
+      >
+        <div className="flex flex-wrap items-baseline justify-between gap-3">
+          <h2
+            id="studi-kasus-judul"
+            className="font-display text-2xl sm:text-3xl"
+          >
+            Studi Kasus
+          </h2>
+          <p className="text-sm text-lembut">{entriTerurut.length} entri</p>
+        </div>
         <p className="mt-3 max-w-baca text-lembut">
-          Tiap jalur hanya memuat pekerjaan yang relevan dengan peran itu, jadi
-          Anda tidak perlu menyaringnya sendiri.
+          Tiap halaman menceritakan urutan yang sama: masalahnya apa, datanya
+          dibersihkan bagaimana, apa yang ditemukan, dan apa yang sebaiknya
+          dilakukan. Berkas kerja aslinya bisa diunduh di tiap halaman.
         </p>
-        <div className="mt-10 grid gap-5 lg:grid-cols-5">
-          <Muncul className="lg:col-span-3">
-            <KartuJalur
-              jalur={analis}
-              jumlah={entriPerJalur(analis.slug).length}
-              utama
-            />
-          </Muncul>
-          <Muncul className="lg:col-span-2" jeda={100}>
-            <KartuJalur
-              jalur={engineer}
-              jumlah={entriPerJalur(engineer.slug).length}
-            />
-          </Muncul>
+
+        <div className="mt-8">
+          {entriTerurut.map((e, i) => (
+            <Muncul key={e.slug} jeda={i * 60}>
+              <KartuEntri entri={e} />
+            </Muncul>
+          ))}
         </div>
       </section>
 
@@ -64,7 +65,7 @@ export default function Beranda() {
             href="/tentang/"
             className="text-sm text-aksen underline decoration-garis underline-offset-4 transition-colors hover:decoration-aksen"
           >
-            Selengkapnya di Tentang Saya
+            Daftar lengkapnya di Tentang Saya
           </Link>
         </div>
         <div className="mt-10">

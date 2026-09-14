@@ -44,16 +44,6 @@ export const kelompokKeahlian: KelompokKeahlian[] = [
       "Dokumentasi proses",
     ],
   },
-  {
-    id: "perancangan-data",
-    judul: "Perancangan dan pembangunan data",
-    item: [
-      "Pemodelan basis data relasional",
-      "PostgreSQL, MySQL",
-      "Prisma ORM",
-      "Next.js dan Express.js untuk sistem yang menghasilkan data",
-    ],
-  },
 ];
 
 /** Beranda hanya menampilkan versi ringkas, maksimal tiga kelompok. */

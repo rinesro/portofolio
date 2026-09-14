@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Download } from "lucide-react";
 import { ambilEntri, entri } from "@/content/entri";
-import { ambilJalur } from "@/content/jalur";
 import { buatMetadata } from "@/lib/metadata";
+import { ukuranBerkas } from "@/lib/ukuran-berkas";
 import { BlokKonten } from "@/components/blok-konten";
 import { SlotGambar } from "@/components/slot-gambar";
 import { DaftarIsi } from "@/components/daftar-isi";
@@ -42,7 +42,7 @@ export default async function HalamanDetail({ params }: Props) {
   const daftarIsi = [
     { id: "ringkasan", judul: "Ringkasan" },
     ...e.bagian.map((b) => ({ id: b.id, judul: b.judul })),
-    { id: "tools-dan-tautan", judul: "Tools dan tautan" },
+    { id: "berkas-dan-tautan", judul: "Berkas dan tautan" },
   ];
   const idGambar = e.gambarDiBagian ?? "visualisasi";
   const adaBagianGambar = e.bagian.some((b) => b.id === idGambar);
@@ -51,26 +51,10 @@ export default async function HalamanDetail({ params }: Props) {
     <div className="mx-auto max-w-5xl px-5 sm:px-8">
       <article>
         <header className="border-b border-garis py-12 sm:py-16">
-          <div className="flex flex-wrap items-center gap-2 text-xs">
-            {e.jalur.map((j) => {
-              const track = ambilJalur(j);
-              if (!track) return null;
-              return (
-                <Link
-                  key={j}
-                  href={`/${j}/`}
-                  className="rounded-full border border-aksen/40 bg-aksen-lembut px-3 py-1 text-aksen transition-colors hover:border-aksen"
-                >
-                  Jalur {track.nama}
-                </Link>
-              );
-            })}
-            <span className="text-lembut">
-              {labelJenis[e.jenis]} · {e.tahun}
-            </span>
-          </div>
-
-          <h1 className="mt-5 max-w-3xl font-display text-4xl leading-[1.1] tracking-tight text-balance sm:text-5xl">
+          <p className="text-xs tracking-wide text-lembut uppercase">
+            {labelJenis[e.jenis]} · {e.tahun}
+          </p>
+          <h1 className="mt-4 max-w-3xl font-display text-4xl leading-[1.1] tracking-tight text-balance sm:text-5xl">
             {e.judul}
           </h1>
         </header>
@@ -135,31 +119,54 @@ export default async function HalamanDetail({ params }: Props) {
             )}
 
             <section
-              id="tools-dan-tautan"
-              aria-labelledby="tools-judul"
+              id="berkas-dan-tautan"
+              aria-labelledby="berkas-judul"
               className="mt-14 scroll-mt-28 border-t border-garis pt-10"
             >
-              <h2 id="tools-judul" className="font-display text-2xl sm:text-3xl">
-                Tools dan tautan
+              <h2
+                id="berkas-judul"
+                className="font-display text-2xl sm:text-3xl"
+              >
+                Berkas dan Tautan
               </h2>
+              <p className="mt-3 max-w-baca text-lembut">
+                Seluruh berkas kerja disimpan di satu tempat, supaya siapa pun
+                yang ingin memeriksa kodenya tidak perlu mencari.
+              </p>
 
-              <h3 className="mt-6 text-xs tracking-wide text-lembut uppercase">
-                Tools yang dipakai
-              </h3>
-              {e.tools.length > 0 ? (
-                <ul className="mt-3 flex flex-wrap gap-2">
-                  {e.tools.map((t) => (
-                    <li
-                      key={t}
-                      className="rounded-full border border-garis px-3 py-1 text-sm text-lembut"
-                    >
-                      {t}
-                    </li>
-                  ))}
+              {e.berkas.length > 0 && (
+                <ul className="mt-6 space-y-3">
+                  {e.berkas.map((b) => {
+                    const ukuran = ukuranBerkas(b.path);
+                    return (
+                      <li key={b.path}>
+                        <a
+                          href={b.path}
+                          download
+                          className="group flex max-w-baca items-start gap-3 rounded-lg border border-garis p-4 transition-colors hover:border-aksen"
+                        >
+                          <Download
+                            className="mt-0.5 size-4 shrink-0 text-aksen"
+                            aria-hidden="true"
+                          />
+                          <span className="min-w-0">
+                            <span className="block text-sm font-medium transition-colors group-hover:text-aksen">
+                              {b.label}
+                              {ukuran && (
+                                <span className="ml-2 font-normal text-lembut">
+                                  {ukuran}
+                                </span>
+                              )}
+                            </span>
+                            <span className="mt-1 block text-sm leading-relaxed text-lembut">
+                              {b.keterangan}
+                            </span>
+                          </span>
+                        </a>
+                      </li>
+                    );
+                  })}
                 </ul>
-              ) : null}
-              {e.toolsPlaceholder && (
-                <Placeholder petunjuk={e.toolsPlaceholder} />
               )}
 
               <h3 className="mt-8 text-xs tracking-wide text-lembut uppercase">
@@ -170,7 +177,9 @@ export default async function HalamanDetail({ params }: Props) {
                   {e.tautan.map((t) =>
                     t.href ? (
                       <li key={t.label}>
-                        <TautanEksternal href={t.href}>{t.label}</TautanEksternal>
+                        <TautanEksternal href={t.href}>
+                          {t.label}
+                        </TautanEksternal>
                       </li>
                     ) : (
                       <li key={t.label}>
@@ -187,26 +196,38 @@ export default async function HalamanDetail({ params }: Props) {
                   Tidak ada tautan publik untuk pekerjaan ini.
                 </p>
               )}
+
+              <h3 className="mt-8 text-xs tracking-wide text-lembut uppercase">
+                Tools yang dipakai
+              </h3>
+              {e.tools.length > 0 && (
+                <ul className="mt-3 flex flex-wrap gap-2">
+                  {e.tools.map((t) => (
+                    <li
+                      key={t}
+                      className="rounded-full border border-garis px-3 py-1 text-sm text-lembut"
+                    >
+                      {t}
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {e.toolsPlaceholder && (
+                <Placeholder petunjuk={e.toolsPlaceholder} />
+              )}
             </section>
 
             <nav className="mt-16 border-t border-garis pt-8">
-              {e.jalur.map((j) => {
-                const track = ambilJalur(j);
-                if (!track) return null;
-                return (
-                  <Link
-                    key={j}
-                    href={`/${j}/`}
-                    className="group inline-flex items-center gap-2 text-sm text-lembut transition-colors hover:text-aksen"
-                  >
-                    <ArrowLeft
-                      className="size-4 transition-transform group-hover:-translate-x-1"
-                      aria-hidden="true"
-                    />
-                    Kembali ke jalur {track.nama}
-                  </Link>
-                );
-              })}
+              <Link
+                href="/#studi-kasus"
+                className="group inline-flex items-center gap-2 text-sm text-lembut transition-colors hover:text-aksen"
+              >
+                <ArrowLeft
+                  className="size-4 transition-transform group-hover:-translate-x-1"
+                  aria-hidden="true"
+                />
+                Kembali ke daftar studi kasus
+              </Link>
             </nav>
           </div>
 

@@ -1,31 +1,45 @@
-import type { Entri, TrackSlug } from "./types";
+import type { Entri } from "./types";
 
 /**
- * Setiap entri hanya tampil di halaman jalur yang disebut pada field `jalur`.
- * Jangan menambahkan jalur hanya supaya sebuah halaman terlihat lebih penuh.
+ * Seluruh isi studi kasus di bawah ini diambil dari berkas kerja aslinya:
+ * spreadsheet Google Sheets untuk Synthetic Store Indonesia, dan notebook
+ * Jupyter untuk dua studi kasus lainnya. Angka hanya boleh diubah kalau
+ * berkas sumbernya ikut berubah.
  */
 export const entri: Entri[] = [
   {
     slug: "synthetic-store-indonesia",
     judul: "Synthetic Store Indonesia, Analisis Penjualan Ritel",
     masalahSingkat:
-      "Data transaksi ritel mentah penuh duplikasi dan label kategori yang tidak konsisten, sehingga laporan penjualan yang dibuat di atasnya menyesatkan.",
+      "Data transaksi ritel mentah penuh duplikasi, kota yang tidak konsisten, dan tanggal pengiriman kosong, sehingga laporan penjualan yang dibuat di atasnya menyesatkan.",
     jenis: "studi-kasus",
-    struktur: "analisis",
     tahun: "2026",
-    jalur: ["data-analyst"],
-    sorotan: ["data-analyst"],
+    sorotan: true,
     ringkasan: {
       masalah:
-        "Data transaksi ritel mentah belum siap dianalisis: ada duplikasi, label kategori yang tidak konsisten, dan nilai kosong.",
+        "Data transaksi ritel 2014–2017 belum siap dianalisis: ada 417 baris duplikat, kolom kota dengan variasi kapitalisasi dan nilai kosong, serta tanggal pengiriman yang tidak lengkap.",
       pendekatan:
-        "Pembersihan dan penyeragaman di Google Sheets, menjawab pertanyaan bisnis dengan logika SQL dan formula query, lalu memantau penjualan dan keuntungan lewat dashboard Looker Studio.",
-      hasil: null,
+        "Pembersihan dan penyeragaman di Google Sheets memakai kolom turunan yang bisa diverifikasi ulang, menjawab pertanyaan bisnis dengan formula query, lalu memantau hasilnya lewat dashboard Looker Studio.",
+      hasil:
+        "Data bersih menyisakan 10.076 dari 10.493 baris dengan seluruh kolom kunci terisi penuh. Dashboard menunjukkan penjualan yang tumbuh sepanjang 2014–2017, dengan November sebagai bulan tertinggi dan wilayah Central menyumbang 38,4 persen pesanan.",
     },
     tools: ["Google Sheets", "SQL", "Looker Studio", "Orange Data Mining"],
+    berkas: [
+      {
+        label: "Spreadsheet pembersihan dan analisis",
+        path: "/dokumen/synthetic-store-indonesia.xlsx",
+        keterangan:
+          "XLSX. Berisi data mentah, kolom hasil pembersihan, catatan tiap langkah, dan sheet jawaban tiap pertanyaan.",
+      },
+      {
+        label: "Dashboard penjualan",
+        path: "/dokumen/dashboard-penjualan-super-market-indonesia.pdf",
+        keterangan: "PDF, 2 halaman. Ekspor dashboard beserta insight dan sarannya.",
+      },
+    ],
     tautan: [
-      { label: "Spreadsheet Google Sheets", href: null },
-      { label: "Dashboard Looker Studio", href: null },
+      { label: "Spreadsheet versi online", href: null },
+      { label: "Dashboard Looker Studio versi online", href: null },
     ],
     bagian: [
       {
@@ -34,7 +48,11 @@ export const entri: Entri[] = [
         blok: [
           {
             kind: "paragraf",
-            teks: "Data transaksi ritel mentah yang belum siap dianalisis: ada duplikasi, label kategori yang tidak konsisten, dan nilai kosong. Tanpa pembersihan, laporan penjualan dan keuntungan yang dihasilkan akan menyesatkan.",
+            teks: "Data transaksi ritel mentah yang belum siap dianalisis: ada duplikasi, label yang tidak konsisten, dan nilai kosong. Tanpa pembersihan, laporan penjualan yang dihasilkan akan menyesatkan.",
+          },
+          {
+            kind: "paragraf",
+            teks: "Datanya berisi 10.493 baris transaksi Super Market Indonesia periode 2014 sampai 2017, mencakup identitas pesanan, pelanggan, kota dan provinsi, wilayah, kategori produk, metode pengiriman, serta nilai penjualan.",
           },
         ],
       },
@@ -43,9 +61,16 @@ export const entri: Entri[] = [
         judul: "Pertanyaan SMART",
         blok: [
           {
-            kind: "placeholder",
-            petunjuk:
-              "Tulis 3 sampai 5 pertanyaan SMART yang benar-benar dijawab dalam analisis ini. Contoh bentuknya: kategori produk mana yang menyumbang keuntungan terbesar, berapa selisihnya dengan kategori terendah, dan tindakan apa yang disarankan.",
+            kind: "daftar-nomor",
+            item: [
+              "Berapa total penjualan, bukan keuntungan, sepanjang tahun 2016?",
+              "Berapa total kuantitas produk yang terjual sepanjang tahun 2016?",
+              "Berapa jumlah pemesanan dengan metode pengiriman First Class pada periode 2014 sampai 2017?",
+              "Berapa jumlah pelanggan di setiap kota?",
+              "Berapa rata-rata nilai penjualan per transaksi di setiap kota sepanjang 2014 sampai 2017?",
+              "Berapa jumlah transaksi untuk tiap hari dalam seminggu, Senin sampai Minggu?",
+              "Lima produk mana yang penjualannya tertinggi sepanjang 2014 sampai 2017?",
+            ],
           },
         ],
       },
@@ -55,7 +80,22 @@ export const entri: Entri[] = [
         blok: [
           {
             kind: "paragraf",
-            teks: "Pembersihan dan penyeragaman dilakukan di Google Sheets: menangani duplikasi, menyamakan label kategori yang tidak konsisten, dan menangani nilai kosong.",
+            teks: "Seluruh pembersihan dikerjakan di Google Sheets dan dicatat langkah demi langkah, supaya orang lain bisa menelusuri ulang keputusannya. Data asli tidak ditimpa; hasil pembersihan ditaruh di kolom turunan tersendiri.",
+          },
+          {
+            kind: "daftar",
+            item: [
+              "Duplikat: 417 baris duplikat dibuang, dari 10.493 baris menjadi 10.076 baris. Duplikat ditentukan dengan membandingkan seluruh kolom, dengan kolom kota dibandingkan tanpa memedulikan huruf besar kecil, karena data yang sama muncul sebagai “Jakarta”, “JAKARTA”, dan “jakarta”.",
+              "Tanggal: tanggal_pemesanan dan tanggal_pengiriman sudah bertipe tanggal di berkas asli. Diverifikasi lebih dulu, jadi tidak perlu dikonversi.",
+              "Tanggal pengiriman kosong: diisi dengan tanggal pemesanan ditambah rata-rata lama pengiriman per metode, dihitung dari baris yang datanya lengkap lalu dibulatkan ke hari terdekat. Same Day sekitar 0 hari, First Class 2 hari, Second Class 3 hari, Standard Class 5 hari.",
+              "Kota: karena kolom provinsi selalu terisi dan tiap provinsi hanya berelasi dengan satu kota, kolom kota bersih diturunkan lewat lookup provinsi ke kota untuk seluruh baris, sehingga hasilnya terisi penuh dan konsisten.",
+              "Kode pos: diturunkan dengan cara yang sama, lewat lookup provinsi ke kode pos.",
+              "Nilai penjualan: divalidasi dengan COUNTIF dan tidak ditemukan satu pun nilai nol setelah duplikat dibuang.",
+            ],
+          },
+          {
+            kind: "catatan",
+            teks: "Spreadsheet-nya memuat blok verifikasi otomatis yang mengecek ulang empat hal setiap kali data berubah: jumlah baris setelah dedup harus 10.076, dan jumlah nilai kosong pada kolom kota bersih, kode pos bersih, serta tanggal pengiriman bersih harus nol.",
           },
         ],
       },
@@ -65,7 +105,18 @@ export const entri: Entri[] = [
         blok: [
           {
             kind: "paragraf",
-            teks: "Pertanyaan bisnis seputar penjualan, keuntungan, dan performa produk dijawab menggunakan logika SQL dan formula query pada spreadsheet.",
+            teks: "Tiap pertanyaan dijawab dengan formula query di atas data yang sudah bersih, dan jawabannya disimpan di sheet terpisah agar bisa diperiksa satu per satu.",
+          },
+          {
+            kind: "daftar",
+            item: [
+              "Total penjualan sepanjang 2016 sebesar Rp9.246.372.270, dengan 9.936 unit produk terjual.",
+              "Metode pengiriman First Class dipakai pada 1.548 pesanan sepanjang 2014 sampai 2017.",
+              "Jumlah pelanggan paling banyak tercatat di Makassar (1.103) dan Surabaya (1.101), paling sedikit di Palembang (932).",
+              "Rata-rata nilai penjualan per transaksi tertinggi ada di Balikpapan (Rp4.085.451) dan terendah di Bandung (Rp2.937.980).",
+              "Senin adalah hari paling ramai dengan 1.887 transaksi, sedangkan Rabu paling sepi dengan 374 transaksi.",
+              "Lima produk dengan penjualan tertinggi: Mesin Fotokopi 5577 (Rp923.997.360), Ordner Arsip A4 9062 (Rp411.800.760), Mesin Laminating 5722 (Rp339.577.200), Kursi Kantor 8559 (Rp328.058.640), dan Binder Kancing A4 9759 (Rp297.352.185).",
+            ],
           },
         ],
       },
@@ -75,7 +126,7 @@ export const entri: Entri[] = [
         blok: [
           {
             kind: "paragraf",
-            teks: "Dashboard Looker Studio untuk memantau penjualan dan keuntungan, lalu diekspor menjadi laporan siap presentasi.",
+            teks: "Angka-angka di atas dituangkan ke dashboard Looker Studio supaya bisa dipantau rutin, lalu diekspor menjadi laporan siap presentasi. Tiap grafik diberi insight dan saran tindak lanjutnya langsung di dashboard.",
           },
         ],
       },
@@ -87,6 +138,11 @@ export const entri: Entri[] = [
             kind: "paragraf",
             teks: "Analisis prediktif regresi terhadap keuntungan menggunakan Orange Data Mining, dengan alur kerja yang didokumentasikan agar bisa direproduksi.",
           },
+          {
+            kind: "placeholder",
+            petunjuk:
+              "Tulis hasil model regresi di Orange: metrik yang keluar dan apa artinya. Kalau angkanya tidak tersimpan, jalankan ulang alurnya lebih dulu.",
+          },
         ],
       },
       {
@@ -94,32 +150,64 @@ export const entri: Entri[] = [
         judul: "Kesimpulan dan Rekomendasi",
         blok: [
           {
-            kind: "placeholder",
-            petunjuk:
-              "Tulis temuan utama dan rekomendasinya, sebagai jawaban atas pertanyaan SMART di atas.",
+            kind: "paragraf",
+            teks: "Setelah dibersihkan, data menjawab ketujuh pertanyaan di atas dan memunculkan lima hal yang bisa langsung ditindaklanjuti.",
+          },
+          {
+            kind: "daftar",
+            item: [
+              "Penjualan tumbuh sepanjang 2014 sampai 2017 dengan lonjakan tertinggi menjelang akhir 2017. Stok dan kapasitas operasional sebaiknya disiapkan lebih awal menjelang kuartal keempat tiap tahun.",
+              "November adalah bulan penjualan tertinggi, diikuti Desember, sejalan dengan musim belanja akhir tahun. Tambahan stok dan tenaga kerja paling tepat disiapkan pada Oktober sampai November.",
+              "Wilayah Central menyumbang 38,4 persen pesanan, lebih dari dua kali lipat West yang paling sedikit (19,2 persen). Strategi pemasaran di West dan East perlu dievaluasi.",
+              "Ketiga kategori produk berkontribusi cukup merata, Technology 36,3 persen, Furniture 32,3 persen, dan Office Supplies 31,4 persen, sehingga alokasi stok tidak perlu digeser besar-besaran antar kategori.",
+              "Standard Class dipilih pada sekitar 6.000 pesanan, jauh melampaui tiga metode lain yang masing-masing di bawah 2.000. Potongan ongkos kirim bisa dipakai untuk mendorong pelanggan mencoba opsi yang lebih cepat.",
+            ],
           },
         ],
       },
     ],
     gambar: [
       {
-        src: null,
-        alt: "",
-        caption: "Data sebelum dan sesudah dibersihkan.",
-        rasio: "16 / 9",
-      },
-      {
-        src: null,
-        alt: "",
+        src: "/gambar/synthetic-store-indonesia/tren-penjualan-2014-2017.png",
+        alt: "Grafik garis penjualan bulanan dari Januari 2014 sampai Desember 2017, bergerak naik turun dengan puncak tertinggi mendekati 2 juta pada akhir 2017.",
         caption:
-          "Dashboard Looker Studio untuk memantau penjualan dan keuntungan.",
-        rasio: "16 / 9",
+          "Tren penjualan bulanan 2014–2017. Naik turun tiap bulan, tetapi puncaknya makin tinggi dari tahun ke tahun.",
+        rasio: "1590 / 460",
       },
       {
-        src: null,
-        alt: "",
-        caption: "Hasil model regresi di Orange Data Mining.",
-        rasio: "16 / 9",
+        src: "/gambar/synthetic-store-indonesia/proporsi-pesanan-per-wilayah.png",
+        alt: "Diagram lingkaran proporsi jumlah pesanan per wilayah: Central 38,4 persen, South 21,6 persen, East 20,8 persen, West 19,2 persen.",
+        caption:
+          "Proporsi jumlah pesanan per wilayah. Central sendirian menyumbang 38,4 persen, hampir dua kali lipat West.",
+        rasio: "745 / 425",
+      },
+      {
+        src: "/gambar/synthetic-store-indonesia/proporsi-penjualan-per-kategori.png",
+        alt: "Diagram lingkaran proporsi penjualan per kategori produk: Technology 36,3 persen, Furniture 32,3 persen, Office Supplies 31,4 persen.",
+        caption:
+          "Proporsi penjualan per kategori produk. Ketiganya berimbang, tidak ada yang mendominasi.",
+        rasio: "755 / 425",
+      },
+      {
+        src: "/gambar/synthetic-store-indonesia/kota-dengan-penjualan-tertinggi.png",
+        alt: "Diagram batang total penjualan sepuluh kota, dari Balikpapan sekitar 4,1 juta sampai Bandung sekitar 2,8 juta.",
+        caption:
+          "Total penjualan per kota. Balikpapan teratas, Bandung terbawah, dengan selisih yang cukup besar.",
+        rasio: "1250 / 485",
+      },
+      {
+        src: "/gambar/synthetic-store-indonesia/metode-pengiriman-paling-sering.png",
+        alt: "Diagram batang jumlah pesanan per metode pengiriman: Standard Class sekitar 6.000, Second Class dan First Class di bawah 2.000, Same Day paling sedikit.",
+        caption:
+          "Metode pengiriman yang paling sering dipakai. Standard Class jauh meninggalkan tiga opsi lainnya.",
+        rasio: "785 / 475",
+      },
+      {
+        src: "/gambar/synthetic-store-indonesia/bulan-dengan-penjualan-tertinggi.png",
+        alt: "Diagram batang penjualan per bulan sepanjang 2014 sampai 2017, diurutkan dari November yang tertinggi sampai Februari yang terendah.",
+        caption:
+          "Penjualan per bulan sepanjang 2014–2017. November dan Desember memimpin, sejalan dengan musim belanja akhir tahun.",
+        rasio: "805 / 475",
       },
     ],
   },
@@ -128,22 +216,34 @@ export const entri: Entri[] = [
     slug: "prediksi-dropout-jaya-jaya-institut",
     judul: "Prediksi Dropout Mahasiswa, Jaya Jaya Institut",
     masalahSingkat:
-      "Sebuah institusi pendidikan perlu tahu faktor apa yang paling berkaitan dengan tingginya angka dropout agar bisa melakukan intervensi lebih awal.",
+      "Institusi pendidikan dengan angka dropout tinggi selalu terlambat menyadari mahasiswa mana yang akan berhenti, sehingga tidak sempat melakukan intervensi.",
     jenis: "studi-kasus",
-    struktur: "analisis",
     tahun: "2025",
-    jalur: ["data-analyst"],
-    sorotan: ["data-analyst"],
+    sorotan: true,
     ringkasan: {
       masalah:
-        "Angka dropout mahasiswa tinggi, tetapi institusi belum tahu faktor apa yang paling berkaitan dengannya.",
+        "Angka dropout di Jaya Jaya Institut tinggi, dan manajemen baru menyadarinya setelah mahasiswa benar-benar berhenti, ketika tidak ada lagi yang bisa dilakukan.",
       pendekatan:
-        "Eksplorasi dan pembersihan data akademik serta demografi mahasiswa dengan Python dan pandas, lalu membangun model klasifikasi untuk memprediksi kemungkinan dropout.",
-      hasil: null,
+        "Eksplorasi 4.424 catatan mahasiswa dengan Python dan pandas untuk mencari faktor yang paling berkaitan dengan dropout, lalu melatih model klasifikasi Random Forest sebagai alat deteksi dini.",
+      hasil:
+        "Model mencapai akurasi 0,90 pada 726 data uji, dengan recall 0,82 untuk kelas dropout. Dua penanda terkuat sama-sama muncul sejak tahun pertama: jumlah SKS yang lulus dan status pelunasan biaya kuliah.",
     },
-    tools: ["Python", "pandas"],
-    toolsPlaceholder:
-      "Lengkapi dengan library pemodelan yang dipakai, setelah algoritmanya ditulis di bagian Pemodelan.",
+    tools: [
+      "Python",
+      "pandas",
+      "NumPy",
+      "Scikit-learn",
+      "Matplotlib",
+      "Seaborn",
+    ],
+    berkas: [
+      {
+        label: "Notebook analisis dan pemodelan",
+        path: "/notebook/prediksi-dropout-jaya-jaya-institut.ipynb",
+        keterangan:
+          "IPYNB. Berisi seluruh kode, output, dan catatan dari pemahaman bisnis sampai evaluasi model.",
+      },
+    ],
     tautan: [
       {
         label: "Repositori GitHub",
@@ -157,7 +257,11 @@ export const entri: Entri[] = [
         blok: [
           {
             kind: "paragraf",
-            teks: "Sebuah institusi pendidikan menghadapi angka dropout mahasiswa yang tinggi dan perlu tahu faktor apa yang paling berkaitan dengannya agar bisa melakukan intervensi lebih awal.",
+            teks: "Jaya Jaya Institut adalah institusi pendidikan tinggi yang berdiri sejak tahun 2000. Reputasinya baik dan lulusannya banyak, tetapi angka mahasiswa yang berhenti di tengah jalan cukup tinggi.",
+          },
+          {
+            kind: "paragraf",
+            teks: "Dropout merugikan institusi secara finansial maupun reputasi, dan merugikan masa depan mahasiswanya sendiri. Masalah utamanya soal waktu: manajemen sering baru sadar seorang mahasiswa akan berhenti setelah semuanya terlambat, sehingga tidak ada tindakan pencegahan yang sempat dilakukan.",
           },
         ],
       },
@@ -166,34 +270,84 @@ export const entri: Entri[] = [
         judul: "Pertanyaan SMART",
         blok: [
           {
-            kind: "placeholder",
-            petunjuk:
-              "Tulis 3 sampai 5 pertanyaan SMART yang dijawab analisis ini.",
+            kind: "daftar-nomor",
+            item: [
+              "Faktor apa yang paling berkaitan dengan dropout, dilihat dari data akademik, demografi, dan status ekonomi mahasiswa?",
+              "Bisakah dibangun model klasifikasi yang menandai mahasiswa berisiko dropout sedini mungkin, supaya institusi masih sempat memberi bimbingan atau intervensi terarah?",
+              "Bagaimana manajemen bisa memantau status dan performa mahasiswa secara berkelanjutan, bukan hanya sekali saat analisis dibuat?",
+            ],
+          },
+          {
+            kind: "catatan",
+            teks: "Ketiga pertanyaan ini adalah tujuan proyek yang tertulis di notebook, ditulis ulang dalam bentuk pertanyaan.",
           },
         ],
       },
       {
         id: "data-wrangling",
-        judul: "Data Wrangling dan Eksplorasi",
+        judul: "Data Wrangling",
         blok: [
           {
             kind: "paragraf",
-            teks: "Eksplorasi dan pembersihan data akademik serta demografi mahasiswa menggunakan Python dan pandas untuk menemukan faktor yang paling berkaitan dengan dropout.",
+            teks: "Datanya berisi 4.424 catatan mahasiswa dengan 37 kolom, mencakup demografi, latar belakang ekonomi, dan performa akademik per semester. Berkasnya CSV dengan pemisah titik koma, jadi pemisahnya perlu ditentukan secara eksplisit saat dimuat.",
+          },
+          {
+            kind: "daftar",
+            item: [
+              "Kelengkapan data diperiksa lebih dulu: seluruh 37 kolom terisi penuh pada 4.424 baris, jadi tidak ada nilai kosong yang perlu ditangani.",
+              "Kolom target Status punya tiga kategori: Dropout, Graduate, dan Enrolled. Kategori Enrolled dikeluarkan karena statusnya belum final, sehingga tidak setara untuk dibandingkan dengan dua kategori lainnya.",
+              "Target disederhanakan menjadi klasifikasi biner sesuai fokus proyek: Dropout bernilai 1 dan Graduate bernilai 0.",
+              "Skala antar kolom disamakan dengan standardisasi, supaya tidak ada fitur yang mendominasi semata-mata karena satuannya berbeda.",
+            ],
+          },
+        ],
+      },
+      {
+        id: "eksplorasi-data",
+        judul: "Eksplorasi Data",
+        blok: [
+          {
+            kind: "paragraf",
+            teks: "Eksplorasi difokuskan pada dua dimensi yang paling dekat dengan tujuan bisnisnya, yaitu kondisi finansial dan performa akademik tahun pertama. Keduanya langsung menunjukkan pemisahan yang tajam.",
+          },
+          {
+            kind: "daftar",
+            item: [
+              "Faktor finansial: 94 persen mahasiswa yang menunggak biaya kuliah berakhir dropout, dibandingkan 30,7 persen pada mahasiswa yang biayanya lunas.",
+              "Performa semester 1: mahasiswa yang akhirnya dropout rata-rata hanya meluluskan 2,6 SKS, sementara yang lulus rata-rata 6,2 SKS.",
+              "Performa semester 2: jaraknya makin lebar, 1,9 SKS pada kelompok dropout dibanding 6,2 SKS pada kelompok yang lulus.",
+            ],
+          },
+          {
+            kind: "paragraf",
+            teks: "Artinya mahasiswa yang berisiko sudah memberi sinyal sejak tahun pertama, jauh sebelum keputusan berhenti benar-benar diambil. Di situlah ruang untuk intervensi berada.",
           },
         ],
       },
       {
         id: "pemodelan",
-        judul: "Pemodelan",
+        judul: "Pemodelan dan Evaluasi",
         blok: [
           {
             kind: "paragraf",
-            teks: "Model klasifikasi dibangun untuk memprediksi kemungkinan dropout.",
+            teks: "Data dibagi 80 banding 20 untuk data latih dan data uji, lalu dilatih dengan Random Forest Classifier berisi 100 pohon. Algoritma ini dipilih karena performanya baik pada data tabular dengan banyak kolom berbeda jenis, dan karena ia bisa menunjukkan fitur mana yang paling menentukan keputusannya.",
           },
           {
-            kind: "placeholder",
-            petunjuk:
-              "Sebutkan algoritma yang dipakai dan metrik hasilnya, misalnya akurasi atau F1 score. Tulis angka yang sebenarnya saja.",
+            kind: "paragraf",
+            teks: "Akurasi saja tidak cukup untuk kasus ini, sehingga yang diprioritaskan adalah recall pada kelas dropout. Alasannya soal biaya kesalahan: menandai mahasiswa aman sebagai berisiko hanya berarti bimbingan yang berlebih, sedangkan melewatkan mahasiswa yang benar-benar akan dropout berarti kehilangan kesempatan intervensi sama sekali.",
+          },
+          {
+            kind: "daftar",
+            item: [
+              "Akurasi keseluruhan 0,90 pada 726 data uji.",
+              "Kelas dropout: presisi 0,92, recall 0,82, F1 0,87, dengan 277 data uji.",
+              "Kelas graduate: presisi 0,90, recall 0,95, F1 0,92, dengan 449 data uji.",
+              "Dari matriks konfusi, model menandai benar 228 dari 277 mahasiswa yang memang dropout, dan melewatkan 49 di antaranya.",
+            ],
+          },
+          {
+            kind: "paragraf",
+            teks: "Lima fitur dengan pengaruh terbesar terhadap prediksi adalah jumlah SKS lulus semester 2 (0,2026), nilai rata-rata semester 2 (0,1560), jumlah SKS lulus semester 1 (0,1165), lalu nilai rata-rata semester 1 dan status pelunasan biaya kuliah yang sama-sama 0,0596. Urutan ini sejalan dengan temuan eksplorasi: performa akademik tahun pertama dan kondisi finansial adalah penanda paling kuat.",
           },
         ],
       },
@@ -203,7 +357,7 @@ export const entri: Entri[] = [
         blok: [
           {
             kind: "paragraf",
-            teks: "Slot gambar di bawah disediakan untuk visualisasi faktor yang paling berkaitan dengan dropout.",
+            teks: "Empat grafik berikut diambil langsung dari notebook, mulai dari sebaran status mahasiswa sampai fitur yang paling menentukan prediksi.",
           },
         ],
       },
@@ -213,19 +367,48 @@ export const entri: Entri[] = [
         blok: [
           {
             kind: "paragraf",
-            teks: "Temuan disajikan dalam bentuk rekomendasi bisnis bagi institusi.",
+            teks: "Dropout di Jaya Jaya Institut bukan kejadian mendadak. Dua penanda muncul jauh sebelumnya dan keduanya bisa dipantau institusi sendiri: tunggakan biaya kuliah, yang berkaitan dengan 94 persen kasus dropout, dan jumlah SKS yang lulus di tahun pertama, yang pada kelompok dropout hanya sepertiga dari kelompok yang lulus.",
           },
-          { kind: "placeholder", petunjuk: "Rangkum rekomendasinya." },
+          {
+            kind: "paragraf",
+            teks: "Model Random Forest yang dilatih mampu menandai 82 persen mahasiswa yang benar-benar akan dropout pada data uji, jadi cukup layak dipakai sebagai penyaring awal sebelum ditindaklanjuti secara manual.",
+          },
+          {
+            kind: "placeholder",
+            petunjuk:
+              "Notebook ini berhenti di temuan dan belum memuat bagian rekomendasi. Tulis rekomendasi tindak lanjut untuk institusi, misalnya kapan mahasiswa berisiko mulai dihubungi dan siapa yang menanganinya.",
+          },
         ],
       },
     ],
     gambar: [
       {
-        src: null,
-        alt: "",
+        src: "/gambar/prediksi-dropout/distribusi-status-mahasiswa.png",
+        alt: "Diagram batang jumlah mahasiswa per status akhir: Dropout, Graduate, dan Enrolled, dengan Graduate paling banyak.",
         caption:
-          "Visualisasi faktor yang paling berkaitan dengan dropout mahasiswa.",
-        rasio: "16 / 9",
+          "Sebaran status akhir mahasiswa. Kategori Enrolled kemudian dikeluarkan dari analisis karena statusnya belum final.",
+        rasio: "560 / 402",
+      },
+      {
+        src: "/gambar/prediksi-dropout/faktor-finansial-dan-akademik.png",
+        alt: "Tiga diagram batang berdampingan: persentase dropout menurut status pembayaran kuliah, rata-rata SKS lulus semester 1, dan rata-rata SKS lulus semester 2 menurut status akhir.",
+        caption:
+          "Dua faktor pembeda paling tajam. Menunggak biaya kuliah berkaitan dengan 94 persen dropout, dan kelompok dropout hanya meluluskan 2,6 lalu 1,9 SKS di dua semester pertama.",
+        rasio: "1584 / 584",
+      },
+      {
+        src: "/gambar/prediksi-dropout/confusion-matrix.png",
+        alt: "Matriks konfusi dengan 428 graduate diprediksi benar, 21 salah ditandai berisiko, 49 dropout terlewat, dan 228 dropout tertangkap.",
+        caption:
+          "Matriks konfusi pada data uji. Dari 277 mahasiswa yang memang dropout, 228 tertangkap dan 49 terlewat.",
+        rasio: "530 / 417",
+      },
+      {
+        src: "/gambar/prediksi-dropout/sepuluh-fitur-paling-berpengaruh.png",
+        alt: "Diagram batang horizontal sepuluh fitur paling berpengaruh, dipimpin jumlah SKS lulus semester 2 dengan nilai 0,2026.",
+        caption:
+          "Sepuluh fitur paling berpengaruh terhadap prediksi. Performa akademik tahun pertama menempati urutan teratas, disusul status pelunasan biaya kuliah.",
+        rasio: "991 / 584",
       },
     ],
   },
@@ -234,22 +417,27 @@ export const entri: Entri[] = [
     slug: "capital-bikeshare",
     judul: "Analisis Penggunaan Layanan Capital Bikeshare",
     masalahSingkat:
-      "Pola permintaan layanan sepeda berbagi belum terbaca dari data perjalanan mentah selama beberapa tahun.",
+      "Pola permintaan layanan sepeda berbagi belum terbaca dari dua tahun data perjalanan mentah, padahal operasional harian bergantung padanya.",
     jenis: "studi-kasus",
-    struktur: "analisis",
     tahun: "2025",
-    jalur: ["data-analyst"],
-    sorotan: [],
+    sorotan: false,
     ringkasan: {
       masalah:
-        "Data perjalanan layanan sepeda berbagi selama beberapa tahun belum memberi gambaran soal pola permintaan.",
+        "Dua tahun data perjalanan sepeda berbagi belum memberi gambaran soal kapan permintaan naik dan turun, sehingga penyiapan armada dan promosi masih menebak.",
       pendekatan:
-        "Exploratory data analysis menyeluruh, dengan visualisasi pola permintaan berdasarkan musim, cuaca, dan tipe pengguna.",
-      hasil: null,
+        "Exploratory data analysis atas 731 catatan harian dan 17.379 catatan per jam, dengan visualisasi pola permintaan menurut cuaca, musim, suhu, dan jam penggunaan.",
+      hasil:
+        "Cuaca cerah menghasilkan rata-rata 4.876,79 penyewaan per hari, hampir tiga kali lipat hari bersalju atau hujan ringan. Total penyewaan naik dari 1.243.103 pada 2011 menjadi 2.049.576 pada 2012, dan pola per jam memperlihatkan dua segmen pengguna yang berbeda.",
     },
-    tools: [],
-    toolsPlaceholder:
-      "Tulis tools yang dipakai pada analisis ini, sesuai isi repositorinya.",
+    tools: ["Python", "pandas", "NumPy", "Matplotlib", "Seaborn"],
+    berkas: [
+      {
+        label: "Notebook analisis",
+        path: "/notebook/capital-bikeshare.ipynb",
+        keterangan:
+          "IPYNB. Berisi seluruh kode, output, dan catatan dari pengumpulan data sampai kesimpulan.",
+      },
+    ],
     tautan: [
       {
         label: "Repositori GitHub",
@@ -263,7 +451,7 @@ export const entri: Entri[] = [
         blok: [
           {
             kind: "paragraf",
-            teks: "Data perjalanan layanan sepeda berbagi selama beberapa tahun dianalisis untuk memahami pola permintaan.",
+            teks: "Data perjalanan layanan sepeda berbagi selama dua tahun dianalisis untuk memahami pola permintaan: kapan orang menyewa, dalam kondisi apa, dan apakah bisnisnya bertumbuh.",
           },
         ],
       },
@@ -272,19 +460,72 @@ export const entri: Entri[] = [
         judul: "Pertanyaan SMART",
         blok: [
           {
-            kind: "placeholder",
-            petunjuk:
-              "Tulis pertanyaan SMART yang dijawab analisis ini, atau hapus bagian ini dari file konten kalau memang tidak ada.",
+            kind: "daftar-nomor",
+            item: [
+              "Bagaimana pengaruh kondisi cuaca terhadap jumlah total penyewaan sepeda harian?",
+              "Bagaimana tren pertumbuhan penyewaan sepeda pada tahun 2011 dibandingkan tahun 2012?",
+            ],
+          },
+        ],
+      },
+      {
+        id: "data-wrangling",
+        judul: "Data Wrangling",
+        blok: [
+          {
+            kind: "paragraf",
+            teks: "Dua berkas dipakai bersamaan: rangkuman harian berisi 731 baris, dan rincian per jam berisi 17.379 baris. Keduanya punya kolom yang hampir sama, bedanya berkas per jam menyimpan kolom jam.",
+          },
+          {
+            kind: "daftar",
+            item: [
+              "Pemeriksaan kualitas data tidak menemukan nilai kosong maupun baris duplikat pada kedua berkas.",
+              "Kolom tanggal masih bertipe teks, jadi dikonversi menjadi tipe tanggal supaya bisa dipakai untuk analisis waktu.",
+              "Kolom musim dan kondisi cuaca masih berupa angka. Keduanya diganti label teks, misalnya 1 menjadi Clear/Partly Cloudy dan 3 menjadi Light Snow/Rain, supaya grafiknya bisa dibaca tanpa penjelasan tambahan.",
+              "Kolom tahun dan bulan ditambahkan dari kolom tanggal untuk mempermudah analisis tren tahunan.",
+              "Data bersih disimpan ke berkas tersendiri, supaya dashboard yang dibangun terpisah memakai sumber data yang sama persis dengan notebook ini.",
+            ],
           },
         ],
       },
       {
         id: "eksplorasi-data",
-        judul: "Eksplorasi Data dan Visualisasi",
+        judul: "Eksplorasi Data",
+        blok: [
+          {
+            kind: "daftar",
+            item: [
+              "Rata-rata penyewaan harian saat cuaca cerah atau berawan sebagian mencapai 4.876,79, turun ke 4.035,86 saat berkabut atau mendung, dan anjlok ke 1.803,29 saat hujan ringan atau bersalju.",
+              "Total penyewaan sepanjang 2011 sebanyak 1.243.103, lalu naik menjadi 2.049.576 pada 2012.",
+              "Dilihat per bulan, penyewaan 2012 konsisten lebih tinggi daripada 2011 di seluruh bulan, dengan puncak pada Juni sampai September.",
+            ],
+          },
+        ],
+      },
+      {
+        id: "visualisasi",
+        judul: "Visualisasi",
         blok: [
           {
             kind: "paragraf",
-            teks: "Exploratory data analysis menyeluruh, dengan visualisasi pola permintaan berdasarkan musim, cuaca, dan tipe pengguna.",
+            teks: "Empat grafik berikut diambil langsung dari notebook: pengaruh cuaca, tren dua tahun, pengelompokan suhu, dan pola penyewaan per jam.",
+          },
+        ],
+      },
+      {
+        id: "analisis-lanjutan",
+        judul: "Analisis Lanjutan",
+        blok: [
+          {
+            kind: "paragraf",
+            teks: "Dua analisis tambahan dikerjakan untuk menggali lebih jauh dari dua pertanyaan awal.",
+          },
+          {
+            kind: "daftar",
+            item: [
+              "Pengelompokan manual suhu menjadi tiga kategori, Cold, Moderate, dan Hot, menunjukkan bahwa kelompok Moderate dan Hot punya rata-rata penyewaan jauh lebih tinggi daripada kelompok Cold. Cuaca dingin adalah hambatan utama pengguna.",
+              "Pola per jam pada hari kerja memperlihatkan dua puncak tajam, sekitar pukul 08.00 dan pukul 17.00 sampai 18.00, khas perjalanan berangkat dan pulang kerja. Pada akhir pekan dan hari libur, polanya landai dengan satu puncak lebar sekitar pukul 12.00 sampai 16.00, khas penggunaan rekreasi.",
+            ],
           },
         ],
       },
@@ -292,348 +533,57 @@ export const entri: Entri[] = [
         id: "kesimpulan",
         judul: "Kesimpulan dan Rekomendasi",
         blok: [
-          { kind: "placeholder", petunjuk: "Tulis kesimpulan analisis ini." },
+          {
+            kind: "daftar",
+            item: [
+              "Kondisi cuaca berpengaruh besar terhadap jumlah penyewaan. Cuaca cerah adalah pendukung utama bisnis, sedangkan hujan ringan atau salju menurunkan minat secara drastis, sehingga operasional dan pemasaran perlu menyesuaikan diri saat musim cuaca buruk tiba.",
+              "Bisnisnya bertumbuh positif. Penyewaan 2012 melampaui 2011 di semua bulan, dengan permintaan memuncak pada kuartal ketiga, Juni sampai September.",
+              "Suhu yang nyaman, Moderate sampai Hot, adalah target pasar paling potensial, sementara suhu dingin ekstrem membuat jumlah pelanggan turun signifikan.",
+              "Layanan ini sebenarnya melayani dua segmen berbeda, yaitu pekerja komuter pada hari kerja dan pengguna rekreasi pada akhir pekan. Keduanya idealnya didekati dengan strategi armada dan promosi yang berbeda pula.",
+            ],
+          },
         ],
       },
     ],
     gambar: [
       {
-        src: null,
-        alt: "",
+        src: "/gambar/capital-bikeshare/rata-rata-penyewaan-per-kondisi-cuaca.png",
+        alt: "Diagram batang rata-rata penyewaan sepeda menurut kondisi cuaca, tertinggi pada cuaca cerah dan terendah pada hujan ringan atau salju.",
         caption:
-          "Visualisasi pola permintaan berdasarkan musim, cuaca, dan tipe pengguna.",
-        rasio: "16 / 9",
-      },
-    ],
-  },
-
-  {
-    slug: "energicerdas-ai",
-    judul:
-      "EnergiCerdas AI, Platform Rekomendasi Konsumsi Energi Rumah Tangga",
-    masalahSingkat:
-      "Rumah tangga sulit mengetahui perangkat mana yang paling membebani tagihan listrik dan kapan sebaiknya dipakai.",
-    jenis: "proyek",
-    struktur: "rekayasa",
-    tahun: "2026",
-    jalur: ["data-engineer"],
-    sorotan: [],
-    ringkasan: {
-      masalah:
-        "Rumah tangga sulit mengetahui perangkat mana yang paling membebani tagihan listrik dan kapan sebaiknya dipakai.",
-      pendekatan:
-        "Memproses data konsumsi listrik menjadi fitur untuk model, lalu menggabungkan classifier fleksibilitas perangkat dengan optimizer penjadwalan untuk menghasilkan rekomendasi penghematan.",
-      hasil:
-        "Classifier LightGBM mencapai akurasi 97,93 persen, dibandingkan 61,67 persen pada sistem berbasis aturan yang dipakai sebagai fallback. Suite pengujian otomatis lolos 20 dari 20 kasus.",
-    },
-    tools: ["LightGBM"],
-    toolsPlaceholder:
-      "Lengkapi dengan tools lain yang dipakai, misalnya bahasa dan library pendukungnya.",
-    tautan: [
-      { label: "Demo langsung", href: "https://project-multiai.vercel.app" },
-    ],
-    bagian: [
-      {
-        id: "latar-belakang",
-        judul: "Latar Belakang",
-        blok: [
-          {
-            kind: "paragraf",
-            teks: "Rumah tangga sulit mengetahui perangkat mana yang paling membebani tagihan listrik dan kapan sebaiknya dipakai. Platform ini memetakan profil konsumsi listrik dan menghasilkan rekomendasi penghematan.",
-          },
-          {
-            kind: "catatan",
-            teks: "Ini skripsi, dengan Pak Singgih sebagai dosen pembimbing.",
-          },
-        ],
+          "Rata-rata penyewaan harian menurut kondisi cuaca. Hujan ringan atau salju memangkas permintaan sampai kurang dari separuh hari cerah.",
+        rasio: "859 / 548",
       },
       {
-        id: "perancangan-data",
-        judul: "Perancangan Data",
-        blok: [
-          {
-            kind: "paragraf",
-            teks: "Data konsumsi listrik diproses menjadi fitur untuk model, bukan diolah sebagai pekerjaan analisis. Seluruh perhitungan didasarkan pada tarif PLN dan acuan energi nasional yang terpublikasi.",
-          },
-          {
-            kind: "placeholder",
-            petunjuk:
-              "Jelaskan sumber data konsumsi dan fitur apa saja yang dibentuk darinya.",
-          },
-        ],
-      },
-      {
-        id: "implementasi",
-        judul: "Implementasi",
-        blok: [
-          {
-            kind: "daftar",
-            item: [
-              "Classifier LightGBM untuk menentukan fleksibilitas perangkat, dengan sistem berbasis aturan sebagai fallback.",
-              "Optimizer penjadwalan greedy dengan batas pengurangan 50 persen dan langkah waktu 0,5 jam.",
-              "Suite pengujian otomatis untuk menjaga hasil tetap konsisten.",
-            ],
-          },
-        ],
-      },
-      {
-        id: "kendala",
-        judul: "Kendala dan Solusinya",
-        blok: [
-          {
-            kind: "placeholder",
-            petunjuk:
-              "Tulis kendala nyata yang muncul selama pengerjaan dan bagaimana diselesaikan.",
-          },
-        ],
-      },
-      {
-        id: "hasil",
-        judul: "Hasil",
-        blok: [
-          {
-            kind: "daftar",
-            item: [
-              "Akurasi classifier LightGBM 97,93 persen, dibandingkan 61,67 persen pada sistem berbasis aturan sebagai fallback.",
-              "Suite pengujian otomatis lolos 20 dari 20 kasus.",
-            ],
-          },
-        ],
-      },
-    ],
-    gambar: [
-      {
-        src: null,
-        alt: "",
-        caption: "Tampilan platform EnergiCerdas AI.",
-        rasio: "16 / 9",
-      },
-    ],
-    gambarDiBagian: "implementasi",
-  },
-
-  {
-    slug: "inventaris-aset-kelurahan-gedong",
-    judul: "Sistem Manajemen Inventaris dan Aset, Kelurahan Gedong",
-    masalahSingkat:
-      "Kantor kelurahan membutuhkan pencatatan pergerakan stok dan pelacakan aset yang sesuai aturan pengelolaan Barang Milik Daerah.",
-    jenis: "proyek",
-    struktur: "rekayasa",
-    tahun: "2025",
-    jalur: ["data-engineer"],
-    sorotan: ["data-engineer"],
-    ringkasan: {
-      masalah:
-        "Kantor kelurahan membutuhkan sistem pencatatan pergerakan stok dan pelacakan aset yang sesuai dengan aturan pengelolaan Barang Milik Daerah.",
-      pendekatan:
-        "Memetakan proses bisnis yang berjalan lebih dulu, menyelaraskan siklus hidup aset dengan Permendagri, lalu membangun sistemnya dengan Next.js, Prisma ORM, dan PostgreSQL.",
-      hasil: null,
-    },
-    tools: [
-      "Next.js (App Router)",
-      "TypeScript",
-      "Prisma ORM",
-      "PostgreSQL",
-      "NextAuth",
-    ],
-    tautan: [
-      { label: "Repositori GitHub", href: "https://github.com/rinesro/web-warehouse" },
-      {
-        label: "Demo",
-        href: "https://source-code-web-pergudangan.vercel.app/",
-      },
-    ],
-    bagian: [
-      {
-        id: "latar-belakang",
-        judul: "Latar Belakang",
-        blok: [
-          {
-            kind: "paragraf",
-            teks: "Kantor kelurahan membutuhkan sistem pencatatan pergerakan stok dan pelacakan aset yang sesuai dengan aturan pengelolaan Barang Milik Daerah.",
-          },
-        ],
-      },
-      {
-        id: "peran",
-        judul: "Peran",
-        blok: [
-          {
-            kind: "paragraf",
-            teks: "Project manager sekaligus developer. Atas arahan dosen pembimbing, saya tetap terlibat langsung di seluruh tahap pengembangan, bukan hanya koordinasi.",
-          },
-        ],
-      },
-      {
-        id: "perancangan-data",
-        judul: "Perancangan Data",
-        blok: [
-          {
-            kind: "daftar",
-            item: [
-              "Pemetaan proses bisnis yang berjalan dilakukan lebih dulu sebelum merancang basis data.",
-              "Siklus hidup aset diselaraskan dengan Permendagri No. 19/2016 beserta pembaruannya No. 7/2024 tentang Barang Milik Daerah.",
-              "Penggalian kebutuhan dilakukan langsung dengan pengguna di kelurahan.",
-            ],
-          },
-        ],
-      },
-      {
-        id: "implementasi",
-        judul: "Implementasi",
-        blok: [
-          {
-            kind: "paragraf",
-            teks: "Dibangun dengan Next.js (App Router), TypeScript, Prisma ORM, PostgreSQL, dan NextAuth.",
-          },
-          {
-            kind: "catatan",
-            teks: "Akun dan basis data demo terpisah sepenuhnya dari yang dipakai Kelurahan Gedong untuk operasional. Tidak ada data asli kelurahan yang ditampilkan di sini.",
-          },
-        ],
-      },
-      {
-        id: "kendala",
-        judul: "Kendala dan Solusinya",
-        blok: [
-          {
-            kind: "placeholder",
-            petunjuk:
-              "Tulis kendala nyata selama pengerjaan dan bagaimana diselesaikan.",
-          },
-        ],
-      },
-      {
-        id: "hasil",
-        judul: "Hasil",
-        blok: [
-          {
-            kind: "placeholder",
-            petunjuk:
-              "Tulis hasil yang benar-benar terukur atau terpakai di kelurahan.",
-          },
-        ],
-      },
-    ],
-    gambar: [
-      {
-        src: null,
-        alt: "",
+        src: "/gambar/capital-bikeshare/tren-penyewaan-2011-vs-2012.png",
+        alt: "Grafik garis total penyewaan per bulan untuk tahun 2011 dan 2012, dengan garis 2012 selalu berada di atas garis 2011.",
         caption:
-          "Tangkapan layar sistem. Gunakan data demo saja, bukan data asli kelurahan.",
-        rasio: "16 / 9",
+          "Tren penyewaan bulanan 2011 dibanding 2012. Garis 2012 berada di atas 2011 sepanjang tahun, dengan puncak pada pertengahan tahun.",
+        rasio: "1031 / 549",
+      },
+      {
+        src: "/gambar/capital-bikeshare/rata-rata-penyewaan-per-cluster-suhu.png",
+        alt: "Diagram batang rata-rata penyewaan untuk tiga kelompok suhu: Cold, Moderate, dan Hot, dengan Cold paling rendah.",
+        caption:
+          "Rata-rata penyewaan per kelompok suhu hasil pengelompokan manual. Suhu dingin menekan permintaan paling dalam.",
+        rasio: "704 / 471",
+      },
+      {
+        src: "/gambar/capital-bikeshare/pola-penyewaan-per-jam.png",
+        alt: "Grafik garis rata-rata penyewaan per jam, membandingkan hari kerja yang berpuncak dua kali dengan akhir pekan yang berpuncak sekali di siang hari.",
+        caption:
+          "Pola penyewaan per jam. Hari kerja berpuncak dua kali di jam berangkat dan pulang kerja, akhir pekan sekali saja di siang hari.",
+        rasio: "1005 / 548",
       },
     ],
-    gambarDiBagian: "implementasi",
-  },
-
-  {
-    slug: "sbm-nac",
-    judul: "SBM-NAC, Sistem Kontrol Akses Jaringan",
-    masalahSingkat:
-      "Akses perangkat ke jaringan perlu dikendalikan lewat sesi sementara dan blocklist, bukan pendaftaran manual satu per satu.",
-    jenis: "studi-kasus",
-    struktur: "rekayasa",
-    tahun: "2025",
-    jalur: ["data-engineer"],
-    sorotan: [],
-    ringkasan: {
-      masalah:
-        "Akses perangkat ke jaringan perlu dikendalikan dengan registrasi mandiri, sesi perangkat sementara, dan blocklist.",
-      pendekatan:
-        "Monorepo Next.js 15 dan Express.js dengan PostgreSQL, Socket.io, Prisma ORM, serta JWT dengan rotasi refresh token.",
-      hasil:
-        "Makalah akademik dalam format dua kolom IEEE, ditulis bersama Gerry Stefanus sebagai penulis kedua.",
-    },
-    tools: [
-      "Next.js 15",
-      "Express.js",
-      "PostgreSQL (Neon)",
-      "Prisma ORM",
-      "Socket.io",
-      "JWT",
-    ],
-    tautan: [],
-    bagian: [
-      {
-        id: "latar-belakang",
-        judul: "Latar Belakang",
-        blok: [
-          {
-            kind: "placeholder",
-            petunjuk:
-              "Tulis konteks dan masalah yang melatarbelakangi sistem ini.",
-          },
-        ],
-      },
-      {
-        id: "perancangan-data",
-        judul: "Perancangan Data",
-        blok: [
-          {
-            kind: "daftar",
-            item: [
-              "PostgreSQL (Neon) dengan Prisma ORM sebagai lapisan akses data.",
-              "Model sesi perangkat sementara yang terhapus otomatis setelah 30 menit.",
-              "Blocklist fingerprint permanen.",
-            ],
-          },
-        ],
-      },
-      {
-        id: "implementasi",
-        judul: "Implementasi",
-        blok: [
-          {
-            kind: "paragraf",
-            teks: "Monorepo Next.js 15 dan Express.js dengan Socket.io serta JWT dengan rotasi refresh token.",
-          },
-          {
-            kind: "daftar",
-            item: [
-              "Registrasi mandiri untuk perangkat.",
-              "Endpoint login terpadu.",
-            ],
-          },
-        ],
-      },
-      {
-        id: "kendala",
-        judul: "Kendala dan Solusinya",
-        blok: [
-          {
-            kind: "placeholder",
-            petunjuk:
-              "Tulis kendala nyata selama pengerjaan dan bagaimana diselesaikan.",
-          },
-        ],
-      },
-      {
-        id: "hasil",
-        judul: "Hasil",
-        blok: [
-          {
-            kind: "paragraf",
-            teks: "Makalah akademik dalam format dua kolom IEEE, ditulis bersama Gerry Stefanus sebagai penulis kedua.",
-          },
-        ],
-      },
-    ],
-    gambar: [],
   },
 ];
-
-export function entriPerJalur(slug: TrackSlug): Entri[] {
-  return entri
-    .filter((e) => e.jalur.includes(slug))
-    .sort((a, b) => {
-      const sorotanA = a.sorotan.includes(slug) ? 1 : 0;
-      const sorotanB = b.sorotan.includes(slug) ? 1 : 0;
-      if (sorotanA !== sorotanB) return sorotanB - sorotanA;
-      return Number(b.tahun) - Number(a.tahun);
-    });
-}
 
 export function ambilEntri(slug: string): Entri | undefined {
   return entri.find((e) => e.slug === slug);
 }
+
+/** Sorotan lebih dulu, lalu tahun terbaru. */
+export const entriTerurut: Entri[] = [...entri].sort((a, b) => {
+  if (a.sorotan !== b.sorotan) return a.sorotan ? -1 : 1;
+  return Number(b.tahun) - Number(a.tahun);
+});

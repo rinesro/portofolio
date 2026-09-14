@@ -1,21 +1,13 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import type { Entri, TrackSlug } from "@/content/types";
+import type { Entri } from "@/content/types";
 
 const labelJenis: Record<Entri["jenis"], string> = {
   "studi-kasus": "Studi kasus",
   proyek: "Proyek",
 };
 
-export function KartuEntri({
-  entri,
-  jalur,
-}: {
-  entri: Entri;
-  jalur: TrackSlug;
-}) {
-  const sorotan = entri.sorotan.includes(jalur);
-
+export function KartuEntri({ entri }: { entri: Entri }) {
   return (
     <article className="group relative border-t border-garis py-8 transition-colors sm:py-10">
       <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-xs tracking-wide text-lembut uppercase">
@@ -24,7 +16,7 @@ export function KartuEntri({
           /
         </span>
         <span>{entri.tahun}</span>
-        {sorotan && (
+        {entri.sorotan && (
           <span className="rounded-full bg-aksen-lembut px-2.5 py-0.5 text-aksen normal-case">
             Sorotan utama
           </span>

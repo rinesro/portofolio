@@ -3,17 +3,12 @@
  * Semua teks situs tinggal di folder /content, komponen tidak menyimpan teks.
  */
 
-export type TrackSlug = "data-analyst" | "data-engineer";
-
 /**
  * Penamaan sengaja dibedakan:
- * - "studi-kasus": pekerjaan analisis/rekayasa yang dikerjakan sendiri
- * - "proyek": hanya untuk pekerjaan dengan klien/pengguna nyata dan skripsi
+ * - "studi-kasus": pekerjaan analisis yang dikerjakan sendiri
+ * - "proyek": hanya untuk pekerjaan dengan klien atau pengguna nyata
  */
 export type JenisEntri = "studi-kasus" | "proyek";
-
-/** Menentukan urutan bagian pada halaman detail. */
-export type StrukturHalaman = "analisis" | "rekayasa";
 
 export type Blok =
   | { kind: "paragraf"; teks: string }
@@ -31,12 +26,12 @@ export type Bagian = {
 };
 
 export type Gambar = {
-  /** Isi dengan path file di /public, contoh: "/studi-kasus/dashboard.png". */
+  /** Path file di /public, contoh: "/gambar/capital-bikeshare/tren.png". */
   src: string | null;
   /** Teks alternatif wajib diisi bersamaan dengan src. */
   alt: string;
   caption: string;
-  /** Rasio kotak gambar, contoh: "16 / 9". */
+  /** Rasio kotak gambar, sesuaikan dengan ukuran asli file. */
   rasio?: string;
 };
 
@@ -46,18 +41,23 @@ export type Tautan = {
   href: string | null;
 };
 
+export type Berkas = {
+  label: string;
+  /** Path file di /public. */
+  path: string;
+  /** Keterangan singkat, misalnya format dan isinya. */
+  keterangan: string;
+};
+
 export type Entri = {
   slug: string;
   judul: string;
   /** Ditampilkan di kartu daftar: satu kalimat masalah yang dijawab. */
   masalahSingkat: string;
   jenis: JenisEntri;
-  struktur: StrukturHalaman;
   tahun: string;
-  /** Entri hanya muncul di halaman jalur yang disebut di sini. */
-  jalur: TrackSlug[];
-  /** Jalur yang menjadikan entri ini sorotan utama. */
-  sorotan: TrackSlug[];
+  /** Ditandai sebagai sorotan pada daftar studi kasus. */
+  sorotan: boolean;
   ringkasan: {
     masalah: string;
     pendekatan: string;
@@ -67,6 +67,8 @@ export type Entri = {
   tools: string[];
   /** Ditampilkan jika daftar tools belum lengkap. */
   toolsPlaceholder?: string;
+  /** Berkas yang bisa diunduh langsung: notebook, dokumen, spreadsheet. */
+  berkas: Berkas[];
   tautan: Tautan[];
   bagian: Bagian[];
   gambar: Gambar[];
@@ -78,14 +80,4 @@ export type KelompokKeahlian = {
   id: string;
   judul: string;
   item: string[];
-};
-
-export type Track = {
-  slug: TrackSlug;
-  nama: string;
-  /** Satu kalimat fokus jalur, dipakai di kartu beranda. */
-  fokus: string;
-  pembuka: string;
-  /** id kelompok keahlian yang relevan untuk jalur ini. */
-  keahlian: string[];
 };

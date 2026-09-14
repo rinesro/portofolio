@@ -1,8 +1,11 @@
-# Portofolio Sandhika Hamzah
+# Portofolio Sandhika Hamzah — Data Analyst
 
-Situs portofolio pribadi untuk melamar posisi **data analyst** (jalur utama)
-dan **data engineer** (jalur kedua). Dibuat dengan Next.js App Router,
-TypeScript, dan Tailwind CSS, tanpa database dan tanpa CMS.
+Situs portofolio pribadi untuk melamar posisi **data analyst**, terutama magang
+data analyst. Dibuat dengan Next.js App Router, TypeScript, dan Tailwind CSS,
+tanpa database dan tanpa CMS.
+
+Situs ini sengaja hanya memuat satu tema, yaitu pekerjaan analisis data. Kalau
+nanti ada tema lain, buat situs terpisah, jangan dicampur ke sini.
 
 Seluruh teks situs disimpan sebagai data terstruktur di folder `/content`.
 Untuk mengubah isi situs, Anda cukup mengedit file di folder itu — tidak perlu
@@ -19,56 +22,72 @@ Buka http://localhost:3000.
 
 Perintah lain:
 
-| Perintah            | Fungsi                                                        |
-| ------------------- | ------------------------------------------------------------- |
-| `npm run build`     | Membangun situs statis ke folder `out/`                        |
-| `npm run lint`      | Memeriksa gaya penulisan kode                                  |
-| `npm run typecheck` | Memeriksa kesalahan TypeScript                                 |
+| Perintah            | Fungsi                                          |
+| ------------------- | ----------------------------------------------- |
+| `npm run build`     | Membangun situs statis ke folder `out/`          |
+| `npm run lint`      | Memeriksa gaya penulisan kode                    |
+| `npm run typecheck` | Memeriksa kesalahan TypeScript                   |
 
 Situs ini memakai **static export** (`output: "export"` di `next.config.ts`).
 Hasil `npm run build` adalah HTML statis biasa, tidak butuh server Node.
 
+## Struktur halaman
+
+| Route                   | Isinya                                                         |
+| ----------------------- | -------------------------------------------------------------- |
+| `/`                     | Hero, seluruh studi kasus, dan ringkasan keahlian               |
+| `/studi-kasus/[slug]/`  | Halaman detail tiap studi kasus                                 |
+| `/tentang/`             | Perkenalan, cara kerja, pendidikan, sertifikasi, keahlian penuh |
+
+Tidak ada halaman daftar studi kasus tersendiri. Daftarnya ada di beranda, dan
+menu "Studi Kasus" di navigasi mengarah ke bagian itu (`/#studi-kasus`).
+
 ## Isi folder `/content`
 
-| File          | Isinya                                                        |
-| ------------- | ------------------------------------------------------------- |
-| `profil.ts`   | Nama, kontak, perkenalan, cara kerja, pendidikan, sertifikasi  |
-| `keahlian.ts` | Kelompok keahlian dan pembagiannya per halaman                |
-| `jalur.ts`    | Dua jalur karier beserta teks pembukanya                      |
-| `entri.ts`    | Semua studi kasus dan proyek                                  |
-| `situs.ts`    | Judul situs, deskripsi, URL, dan pengaturan tombol CV          |
-| `types.ts`    | Definisi tipe data. Baca ini kalau ragu field apa yang tersedia |
+| File          | Isinya                                                          |
+| ------------- | --------------------------------------------------------------- |
+| `profil.ts`   | Nama, kontak, perkenalan, cara kerja, pendidikan, sertifikasi     |
+| `keahlian.ts` | Kelompok keahlian, dan mana yang tampil di beranda                |
+| `entri.ts`    | Semua studi kasus                                                 |
+| `situs.ts`    | Judul situs, deskripsi, URL, dan pengaturan tombol CV              |
+| `types.ts`    | Definisi tipe data. Baca ini kalau ragu field apa yang tersedia   |
 
 ### Aturan penamaan
 
-- **Studi kasus**: pekerjaan yang dikerjakan sendiri tanpa klien.
-- **Proyek**: hanya untuk pekerjaan dengan klien atau pengguna nyata, dan skripsi.
+- **Studi kasus**: pekerjaan analisis yang dikerjakan sendiri.
+- **Proyek**: hanya untuk pekerjaan dengan klien atau pengguna nyata.
 
 Bedanya diatur lewat field `jenis` pada tiap entri (`"studi-kasus"` atau
-`"proyek"`). Label pada kartu dan halaman detail ikut field ini.
+`"proyek"`). Label pada kartu dan halaman detail ikut field ini. Saat ini
+ketiga entri berjenis studi kasus.
 
 ## Menambah studi kasus baru
 
 Tambahkan satu objek baru ke array `entri` di `content/entri.ts`. Halaman
-detailnya, entri di halaman jalur, sitemap, dan metadata Open Graph akan
-terbentuk sendiri.
+detailnya, kartu di beranda, sitemap, dan metadata Open Graph akan terbentuk
+sendiri.
 
 ```ts
 {
   slug: "nama-di-url",              // halaman jadi /studi-kasus/nama-di-url/
   judul: "Judul Lengkap Pekerjaan",
   masalahSingkat: "Satu kalimat masalah yang dijawab. Tampil di kartu daftar.",
-  jenis: "studi-kasus",             // atau "proyek"
-  struktur: "analisis",             // atau "rekayasa"
+  jenis: "studi-kasus",
   tahun: "2026",
-  jalur: ["data-analyst"],          // entri hanya muncul di jalur yang disebut
-  sorotan: ["data-analyst"],        // beri badge "Sorotan utama", boleh []
+  sorotan: true,                    // beri badge "Sorotan utama" dan taruh di atas
   ringkasan: {
     masalah: "Satu sampai dua kalimat.",
     pendekatan: "Satu sampai dua kalimat.",
     hasil: null,                    // null = tampil sebagai placeholder
   },
   tools: ["SQL", "Looker Studio"],
+  berkas: [                         // muncul di blok "Berkas dan Tautan"
+    {
+      label: "Notebook analisis",
+      path: "/notebook/nama-file.ipynb",
+      keterangan: "IPYNB. Berisi seluruh kode dan outputnya.",
+    },
+  ],
   tautan: [
     { label: "Repositori GitHub", href: "https://..." },
     { label: "Dashboard", href: null },   // null = tampil sebagai "belum diisi"
@@ -81,12 +100,10 @@ terbentuk sendiri.
 ### Urutan bagian
 
 Struktur halaman detail mengikuti urutan array `bagian`, jadi Andalah yang
-menentukan urutannya. Dua pola yang dipakai sekarang:
+menentukan urutannya. Pola yang dipakai ketiga studi kasus sekarang:
 
-- `struktur: "analisis"` — Latar Belakang, Pertanyaan SMART, Data Wrangling,
-  Eksplorasi Data, Visualisasi, Kesimpulan dan Rekomendasi.
-- `struktur: "rekayasa"` — Latar Belakang, Perancangan Data, Implementasi,
-  Kendala dan Solusinya, Hasil.
+Latar Belakang → Pertanyaan SMART → Data Wrangling → Eksplorasi Data →
+Visualisasi → (Analisis Lanjutan, opsional) → Kesimpulan dan Rekomendasi.
 
 Field `id` pada tiap bagian dipakai sebagai anchor dan entri daftar isi, jadi
 tulis dalam huruf kecil dan tanpa spasi.
@@ -101,33 +118,47 @@ tulis dalam huruf kecil dan tanpa spasi.
 { kind: "placeholder", petunjuk: "..." }         // penanda "belum diisi"
 ```
 
-Pertanyaan SMART sebaiknya memakai `daftar-nomor` supaya tampil sebagai daftar
-bernomor yang menonjol, bukan paragraf.
+Pertanyaan SMART memakai `daftar-nomor` supaya tampil sebagai daftar bernomor
+yang menonjol, bukan paragraf.
+
+## Menaruh berkas dan gambar
+
+Semua berkas statis ada di `/public` dan diakses lewat path root. Susunannya:
+
+| Folder              | Isinya                                                      |
+| ------------------- | ----------------------------------------------------------- |
+| `/public/notebook/` | Notebook Jupyter mentah, ditautkan sebagai tombol unduh       |
+| `/public/dokumen/`  | PDF dan spreadsheet, ditautkan sebagai tombol unduh           |
+| `/public/gambar/`   | Grafik yang tampil di bagian Visualisasi, dikelompokkan per studi kasus |
+
+Ukuran file pada tombol unduh dibaca otomatis saat build, jadi tidak perlu
+ditulis manual.
 
 ### Menambahkan gambar
 
-1. Taruh file di `/public`, misalnya
-   `public/studi-kasus/synthetic-store/dashboard.png`.
+1. Ekspor grafiknya jadi PNG, taruh di `/public/gambar/<slug-studi-kasus>/`.
 2. Isi field `gambar` pada entri:
 
 ```ts
 gambar: [
   {
-    src: "/studi-kasus/synthetic-store/dashboard.png",
-    alt: "Dashboard Looker Studio menampilkan penjualan per kategori produk",
-    caption: "Dashboard untuk memantau penjualan dan keuntungan.",
-    rasio: "16 / 9",
+    src: "/gambar/capital-bikeshare/pola-penyewaan-per-jam.png",
+    alt: "Grafik garis rata-rata penyewaan per jam, hari kerja berpuncak dua kali.",
+    caption: "Pola penyewaan per jam.",
+    rasio: "1005 / 548",   // isi dengan lebar/tinggi asli file
   },
 ],
 ```
 
-`alt` wajib diisi begitu `src` diisi. Selama `src` masih `null`, yang tampil
-adalah kotak placeholder dengan rasio yang sama, jadi tata letak tidak bergeser
-saat gambar aslinya dipasang.
+`alt` wajib diisi begitu `src` diisi, dan `rasio` sebaiknya mengikuti ukuran
+asli file supaya gambar tidak terpotong atau melar. Selama `src` masih `null`,
+yang tampil adalah kotak placeholder dengan rasio yang sama.
 
 Gambar ditampilkan di bagian ber-`id` `"visualisasi"`. Kalau entri Anda memakai
-id lain, sebutkan lewat field `gambarDiBagian`, misalnya
-`gambarDiBagian: "implementasi"`.
+id lain, sebutkan lewat field `gambarDiBagian`.
+
+Grafik yang lebar sulit dibaca di layar ponsel, jadi tiap gambar bisa diketuk
+untuk dibuka pada ukuran aslinya di tab baru. Ini berjalan otomatis.
 
 ## Mengganti tampilan
 
@@ -163,89 +194,58 @@ Cloudflare Pages, atau GitHub Pages dengan mengunggah isi folder `out/`.
 
 ## Daftar placeholder yang masih perlu diisi
 
-Semua placeholder tampil mencolok di situs sebagai kotak bergaris putus-putus
-bertuliskan "Belum diisi", jadi tidak akan lolos tanpa disadari. Berikut
-daftar lengkapnya.
+Sisanya tinggal sedikit. Semua placeholder tampil mencolok di situs sebagai
+kotak bergaris putus-putus bertuliskan "Belum diisi", jadi tidak akan lolos
+tanpa disadari.
 
-### 1. File di `/public`
+### 1. File CV
 
-- [ ] `cv-sandhika-hamzah.pdf` — setelah diunggah, ubah `cv.tersedia` menjadi
-      `true` di `content/situs.ts` supaya tombol "Unduh CV" di navigasi aktif.
-      Sebelum itu, tombolnya tampil sebagai "CV (belum diunggah)".
-- [ ] Gambar Open Graph (opsional) — kalau ingin thumbnail saat link dibagikan,
-      taruh `og.png` (1200×630) di `/public` lalu daftarkan di `lib/metadata.ts`.
+- [ ] Taruh `cv-sandhika-hamzah.pdf` di `/public`, lalu ubah `cv.tersedia`
+      menjadi `true` di `content/situs.ts` supaya tombol "Unduh CV" di navigasi
+      aktif. Sebelum itu, tombolnya tampil sebagai "CV (belum diunggah)".
 
 ### 2. Alamat situs
 
 - [ ] `url` di `content/situs.ts` masih memakai alamat sementara
       `https://sandhika-hamzah.vercel.app`. Ganti setelah domain finalnya ada.
+- [ ] Gambar Open Graph (opsional) — kalau ingin thumbnail saat link dibagikan,
+      taruh `og.png` (1200×630) di `/public` lalu daftarkan di `lib/metadata.ts`.
 
-### 3. Synthetic Store Indonesia (`content/entri.ts`)
+### 3. Synthetic Store Indonesia
 
-- [ ] **Pertanyaan SMART** — 3 sampai 5 pertanyaan yang benar-benar dijawab.
-- [ ] **Kesimpulan dan Rekomendasi** — temuan utama dan rekomendasinya.
-- [ ] **Ringkasan → hasil** — satu sampai dua kalimat hasilnya.
-- [ ] **Tautan** — link spreadsheet Google Sheets dan dashboard Looker Studio.
-- [ ] **3 gambar** — data sebelum/sesudah dibersihkan, dashboard Looker Studio,
-      hasil model regresi di Orange.
+- [ ] **Analisis Lanjutan** — hasil model regresi di Orange Data Mining. Ini
+      satu-satunya bagian yang datanya tidak ada di spreadsheet, jadi perlu
+      dijalankan ulang atau dicari catatan metriknya.
+- [ ] **Tautan versi online** — link spreadsheet Google Sheets dan dashboard
+      Looker Studio yang bisa dibuka langsung. Versi unduhannya (XLSX dan PDF)
+      sudah terpasang, tetapi link hidup lebih meyakinkan bagi recruiter.
 
-### 4. Prediksi Dropout Mahasiswa, Jaya Jaya Institut
+### 4. Prediksi Dropout Mahasiswa
 
-- [ ] **Pertanyaan SMART**.
-- [ ] **Pemodelan** — algoritma yang dipakai dan metrik hasilnya (akurasi atau
-      F1 score). Tulis angka yang sebenarnya saja.
-- [ ] **Kesimpulan** — rangkuman rekomendasinya.
-- [ ] **Ringkasan → hasil**.
-- [ ] **Tools** — lengkapi setelah algoritmanya ditulis.
-- [ ] **1 gambar** — visualisasi faktor yang paling berkaitan dengan dropout.
+- [ ] **Rekomendasi** pada bagian Kesimpulan. Notebooknya berhenti di temuan dan
+      tidak memuat rekomendasi, jadi bagian ini memang perlu ditulis manual:
+      kapan mahasiswa berisiko mulai dihubungi, dan siapa yang menanganinya.
 
-### 5. Analisis Penggunaan Layanan Capital Bikeshare
+### 5. Capital Bikeshare
 
-- [ ] **Pertanyaan SMART** — atau hapus bagian itu dari `content/entri.ts`
-      kalau analisis ini memang tidak memakainya.
-- [ ] **Kesimpulan**.
-- [ ] **Ringkasan → hasil**.
-- [ ] **Tools** — belum ada satu pun yang dicantumkan.
-- [ ] **1 gambar** — visualisasi pola permintaan.
-
-### 6. EnergiCerdas AI
-
-- [ ] **Perancangan Data** — sumber data konsumsi dan fitur yang dibentuk.
-- [ ] **Kendala dan Solusinya**.
-- [ ] **Tools** — baru LightGBM yang tercantum.
-- [ ] **1 gambar** — tampilan platformnya.
-
-### 7. Sistem Inventaris dan Aset, Kelurahan Gedong
-
-- [ ] **Kendala dan Solusinya**.
-- [ ] **Hasil**.
-- [ ] **Ringkasan → hasil**.
-- [ ] **1 gambar** — tangkapan layar sistem. **Gunakan data demo saja**, jangan
-      data asli kelurahan.
-
-### 8. SBM-NAC
-
-- [ ] **Latar Belakang** — konteks dan masalah yang melatarbelakangi sistem ini.
-- [ ] **Kendala dan Solusinya**.
-
-### 9. Teks pembuka jalur Data Engineer
-
-File konten aslinya menyebut jalur ini "isinya lebih sedikit daripada jalur
-analis". Setelah semua entri dimasukkan, jumlahnya ternyata sama, tiga lawan
-tiga, jadi kalimat itu tidak dipakai supaya situs tidak memuat klaim yang tidak
-sesuai kenyataan. Kalau nanti jumlahnya berubah, sesuaikan teks `pembuka` pada
-`content/jalur.ts`.
+Tidak ada placeholder. Seluruh isinya sudah lengkap dari notebook.
 
 ---
 
-## Yang sengaja tidak ada di situs ini
+## Catatan soal isi
 
-Supaya tidak dimasukkan lagi tanpa sengaja:
+Angka dan temuan di tiap studi kasus diambil langsung dari berkas kerjanya,
+yaitu spreadsheet `synthetic-store-indonesia.xlsx` dan dua notebook Jupyter di
+`/public/notebook/`. Kalau berkas sumbernya diperbarui, perbarui juga angkanya
+di `content/entri.ts` supaya keduanya tidak berbeda.
+
+### Yang sengaja tidak ada di situs ini
 
 - Tableau dan Power BI, dalam bentuk apa pun. Keduanya memang belum pernah
   dipakai.
 - Section "Pengalaman Kerja", magang, atau organisasi. Belum ada isinya, jadi
   sectionnya sekalian ditiadakan, bukan dibiarkan kosong.
-- Data asli milik Kelurahan Gedong.
+- Pekerjaan rekayasa sistem dan data engineering. Dipindahkan keluar dari situs
+  ini sesuai keputusan pemilik situs.
 - Klaim bahwa sertifikat BNSP sudah terbit. Statusnya ditulis apa adanya:
   dinyatakan kompeten, sertifikat masih dalam proses penerbitan.

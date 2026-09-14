@@ -7,9 +7,8 @@ export const profil = {
   linkedin: "https://linkedin.com/in/sandhika-hamzah-24a31b266",
   github: "https://github.com/rinesro",
 
-  /** Satu kalimat posisi yang dicari, data analyst di depan. */
-  posisi:
-    "Mencari posisi data analyst, terutama magang data analyst, dan terbuka untuk peran data engineer.",
+  /** Satu kalimat posisi yang dicari. */
+  posisi: "Mencari posisi data analyst, terutama magang data analyst.",
 
   perkenalan:
     "Fresh graduate S1 Informatika Universitas Gunadarma dengan IPK 3.76 dari 4.00 yang fokus di analisis data. Terbiasa mengambil data dengan SQL, membersihkan dan memvalidasinya dengan Python atau spreadsheet, merekonsiliasi data dari beberapa sumber, lalu menyajikannya sebagai dashboard dan laporan rutin yang siap dibaca. Setiap tahap didokumentasikan agar bisa diulang orang lain. Latar belakang membangun sistem membuat saya paham dari mana data berasal dan mengapa data bisa kotor, bukan hanya cara menganalisisnya.",
