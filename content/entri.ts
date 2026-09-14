@@ -265,7 +265,10 @@ export const entri: Entri[] = [
         label: "Repositori GitHub",
         href: "https://github.com/rinesro/jaya-jaya-dropout-prediction",
       },
-      { label: "Prototipe prediksi (Streamlit)", href: null },
+      {
+        label: "Prototipe prediksi (Streamlit)",
+        href: "https://jaya-jaya-dropout-prediction-nyw2rs7ulidyqrfcq87mxc.streamlit.app/",
+      },
     ],
     bagian: [
       {

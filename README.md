@@ -195,24 +195,17 @@ Cloudflare Pages, atau GitHub Pages dengan mengunggah isi folder `out/`.
 
 ## Daftar placeholder yang masih perlu diisi
 
-Tinggal dua, plus satu yang sifatnya opsional. Semua placeholder tampil
-mencolok di situs sebagai kotak atau chip bergaris putus-putus bertuliskan
-"belum diisi", jadi tidak akan lolos tanpa disadari.
+Isi situs sudah lengkap. Yang tersisa hanya satu, plus satu yang sifatnya
+opsional. Kalau nanti ada bagian yang dikosongkan lagi, placeholder-nya akan
+tampil mencolok di situs sebagai kotak atau chip bergaris putus-putus
+bertuliskan "belum diisi", jadi tidak akan lolos tanpa disadari.
 
-### 1. Tautan prototipe Streamlit (Prediksi Dropout)
-
-- [ ] README repo `jaya-jaya-dropout-prediction` memuat dua URL Streamlit yang
-      berbeda antara teks tautan dan target hyperlink-nya, jadi belum jelas mana
-      yang aktif. Setelah dipastikan, isi `href` pada entri "Prototipe prediksi
-      (Streamlit)" di `content/entri.ts`. Sekalian rapikan juga README repo itu
-      supaya tidak menyimpan dua alamat berbeda.
-
-### 2. Alamat situs
+### 1. Alamat situs
 
 - [ ] `url` di `content/situs.ts` masih memakai alamat sementara
       `https://sandhika-hamzah.vercel.app`. Ganti setelah domain finalnya ada.
 
-### 3. Gambar Open Graph (opsional)
+### 2. Gambar Open Graph (opsional)
 
 - [ ] Kalau ingin thumbnail saat link dibagikan, taruh `og.png` (1200×630) di
       `/public` lalu daftarkan di `lib/metadata.ts`.
