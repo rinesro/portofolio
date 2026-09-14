@@ -22,9 +22,14 @@ export const situs = {
       : "https://sandhika-hamzah.vercel.app"),
 
   cv: {
-    /** Taruh file PDF-nya di /public dengan nama yang sama persis. */
+    /**
+     * CV sengaja tidak dipasang di situs, supaya isinya bisa disesuaikan
+     * untuk tiap lowongan dan dikirim langsung ke perusahaan yang dilamar.
+     * Kalau nanti berubah pikiran: taruh PDF-nya di /public dengan nama yang
+     * sama seperti `path`, lalu ubah `tampilkan` menjadi true. Tombol unduh
+     * di navigasi akan muncul kembali dengan sendirinya.
+     */
+    tampilkan: false,
     path: "/cv-sandhika-hamzah.pdf",
-    /** Ubah ke true setelah file CV benar-benar ada di /public. */
-    tersedia: true,
   },
 } as const;

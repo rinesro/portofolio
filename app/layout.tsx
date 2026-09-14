@@ -4,6 +4,7 @@ import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { situs } from "@/content/situs";
+import { gambarPratinjau } from "@/lib/metadata";
 
 const fraunces = Fraunces({
   subsets: ["latin"],
@@ -31,6 +32,11 @@ export const metadata: Metadata = {
     type: "website",
     locale: "id_ID",
     siteName: situs.nama,
+    images: [gambarPratinjau],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: [gambarPratinjau.url],
   },
 };
 

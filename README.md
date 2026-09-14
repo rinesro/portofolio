@@ -130,7 +130,7 @@ Semua berkas statis ada di `/public` dan diakses lewat path root. Susunannya:
 | `/public/notebook/` | Notebook Jupyter mentah, ditautkan sebagai tombol unduh       |
 | `/public/dokumen/`  | PDF dan spreadsheet, ditautkan sebagai tombol unduh           |
 | `/public/gambar/`   | Grafik yang tampil di bagian Visualisasi, dikelompokkan per studi kasus |
-| `/public/`          | `cv-sandhika-hamzah.pdf`, ditautkan dari tombol di navigasi     |
+| `/public/`          | `og.png`, gambar pratinjau saat tautan situs dibagikan          |
 
 Ukuran file pada tombol unduh dibaca otomatis saat build, jadi tidak perlu
 ditulis manual.
@@ -195,20 +195,20 @@ Cloudflare Pages, atau GitHub Pages dengan mengunggah isi folder `out/`.
 
 ## Daftar placeholder yang masih perlu diisi
 
-Isi situs sudah lengkap. Yang tersisa hanya satu, plus satu yang sifatnya
-opsional. Kalau nanti ada bagian yang dikosongkan lagi, placeholder-nya akan
-tampil mencolok di situs sebagai kotak atau chip bergaris putus-putus
-bertuliskan "belum diisi", jadi tidak akan lolos tanpa disadari.
+Tidak ada. Seluruh isi situs sudah terisi, dan alamat situs terdeteksi sendiri
+dari Vercel saat build.
 
-### 1. Alamat situs
+Kalau nanti ada bagian yang dikosongkan lagi, placeholder-nya akan tampil
+mencolok di situs sebagai kotak atau chip bergaris putus-putus bertuliskan
+"belum diisi", jadi tidak akan lolos tanpa disadari.
 
-- [ ] `url` di `content/situs.ts` masih memakai alamat sementara
-      `https://sandhika-hamzah.vercel.app`. Ganti setelah domain finalnya ada.
+### Mengganti gambar pratinjau tautan
 
-### 2. Gambar Open Graph (opsional)
-
-- [ ] Kalau ingin thumbnail saat link dibagikan, taruh `og.png` (1200×630) di
-      `/public` lalu daftarkan di `lib/metadata.ts`.
+`public/og.png` (1200×630) adalah gambar yang muncul saat tautan situs
+dibagikan di WhatsApp, LinkedIn, dan sejenisnya. Isinya nama, posisi yang
+dicari, dan grafik tren penjualan dari studi kasus Synthetic Store. Untuk
+menggantinya, timpa file itu dengan gambar berukuran sama. Teks alternatifnya
+diatur di `lib/metadata.ts` pada `gambarPratinjau`.
 
 ---
 
@@ -239,3 +239,8 @@ angka dari grafiknya, karena itu output yang sebenarnya.
   ini sesuai keputusan pemilik situs.
 - Klaim bahwa sertifikat BNSP sudah terbit. Statusnya ditulis apa adanya:
   dinyatakan kompeten, sertifikat masih dalam proses penerbitan.
+- Tombol unduh CV. CV sengaja tidak dipasang supaya isinya bisa disesuaikan
+  untuk tiap lowongan dan dikirim langsung ke perusahaan yang dilamar. Footer
+  menjelaskan hal ini agar pembaca tahu harus meminta ke mana. Kalau nanti
+  berubah pikiran, taruh PDF-nya di `/public` lalu ubah `cv.tampilkan` menjadi
+  `true` di `content/situs.ts`.

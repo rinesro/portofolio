@@ -10,6 +10,9 @@ export function SiteFooter() {
           Terbuka untuk kesempatan magang maupun posisi entry level di bidang
           data. Berbasis di {profil.lokasi}.
         </p>
+        <p className="mt-2 max-w-baca text-sm text-lembut">
+          {profil.catatanCV}
+        </p>
         <BarisKontak className="mt-6" />
         <p className="mt-10 text-xs text-lembut">
           © {new Date().getFullYear()} {profil.nama}.

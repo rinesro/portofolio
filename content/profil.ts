@@ -10,6 +10,13 @@ export const profil = {
   /** Satu kalimat posisi yang dicari. */
   posisi: "Mencari posisi data analyst, terutama magang data analyst.",
 
+  /**
+   * Ditampilkan di footer. CV tidak dipasang di situs supaya isinya bisa
+   * disesuaikan per lowongan, jadi baris ini yang menjelaskannya.
+   */
+  catatanCV:
+    "CV disesuaikan untuk tiap lowongan, jadi tidak dipasang di situs ini. Silakan minta lewat email dan saya kirimkan.",
+
   perkenalan:
     "Fresh graduate S1 Informatika Universitas Gunadarma dengan IPK 3.76 dari 4.00 yang fokus di analisis data. Terbiasa mengambil data dengan SQL, membersihkan dan memvalidasinya dengan Python atau spreadsheet, merekonsiliasi data dari beberapa sumber, lalu menyajikannya sebagai dashboard dan laporan rutin yang siap dibaca. Setiap tahap didokumentasikan agar bisa diulang orang lain. Latar belakang membangun sistem membuat saya paham dari mana data berasal dan mengapa data bisa kotor, bukan hanya cara menganalisisnya.",
 

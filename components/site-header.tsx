@@ -103,17 +103,7 @@ export function SiteHeader() {
 }
 
 function TombolCV({ className = "" }: { className?: string }) {
-  if (!situs.cv.tersedia) {
-    return (
-      <span
-        title="File CV belum diunggah ke folder /public"
-        className={`items-center gap-1.5 rounded-full border border-dashed border-garis px-3 py-1.5 text-xs text-lembut ${className || "inline-flex"}`}
-      >
-        <Download className="size-3.5" aria-hidden="true" />
-        CV (belum diunggah)
-      </span>
-    );
-  }
+  if (!situs.cv.tampilkan) return null;
 
   return (
     <a
